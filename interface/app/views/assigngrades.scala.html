@@ -1,0 +1,29 @@
+@(teacher: model.Teacher, clazz: model.Clazz, students: Seq[model.Student])
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Fénix - SIRS</title>
+        <link href="@routes.Assets.at("bootstrap/css/bootstrap.min.css")" rel="stylesheet">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("bootstrap/js/bootstrap.min.js")" type="text/javascript"></script>
+    </head>
+    <body>
+        <h1>Logged in: @teacher.name</h1>
+        <div class="container">
+            <form class="form-signin" role="form" action="@routes.Application.submitGrades" method="post">
+                <h2 class="form-signin-heading">Please insert the grades of the students</h2>
+                <table>
+                    @for(st <- students) {
+                        <tr>
+                            <td> <p>@st.id -- @st.name</p> </td> <td> <input type="number" class="form-control" name="grade" required> </td>
+                        </tr>
+                    }
+                </table>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+            </form>
+        </div>
+    </body>
+</html>

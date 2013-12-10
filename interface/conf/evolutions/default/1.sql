@@ -31,6 +31,11 @@ CREATE TABLE public."Student"
   "username" TEXT               NOT NULL
 );
 
+INSERT INTO public."Student" VALUES (1, 'Student 1', 'ist170001');
+INSERT INTO public."Student" VALUES (2, 'Student 2', 'ist170002');
+INSERT INTO public."Student" VALUES (3, 'Student 3', 'ist170003');
+INSERT INTO public."Student" VALUES (4, 'Student 4', 'ist170004');
+
 CREATE TABLE public."Class"
 (
   "id"         SERIAL PRIMARY KEY NOT NULL,
@@ -56,6 +61,11 @@ CREATE TABLE public."Enrollment"
   "studentId" BIGINT REFERENCES public."Student",
   "classId"   BIGINT REFERENCES public."Class"
 );
+
+INSERT INTO public."Enrollment" VALUES (1, 1, 1);
+INSERT INTO public."Enrollment" VALUES (2, 2, 1);
+INSERT INTO public."Enrollment" VALUES (3, 3, 1);
+INSERT INTO public."Enrollment" VALUES (4, 4, 2);
 
 # --- !Downs
 

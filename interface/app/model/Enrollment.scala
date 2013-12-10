@@ -23,4 +23,14 @@ object EnrollmentTable extends Table[Enrollment]("Enrollment") with BaseTable[En
 
   def auto = studentId ~ classId <>(EnrollmentFactory.apply, EnrollmentFactory.unapply _)
 
+  def getStudentsOfClass(classId: Long): Seq[Student] = {
+    BasicDB.withConnection {
+      connection =>
+        implicit session: Session =>
+          (for (enrolled <- this if enrolled.classId === classId) yield enrolled.studentId).list
+    }.map {
+    	studentId => StudentTable.getById(studentId)
+    }.flatten
+  }
+
 }
