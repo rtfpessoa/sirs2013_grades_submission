@@ -2,15 +2,15 @@
 
 CREATE TABLE public."Teacher"
 (
-  "id"           SERIAL PRIMARY KEY NOT NULL,
-  "name"         TEXT               NOT NULL,
-  "username"     TEXT               NOT NULL,
-  UNIQUE("username"),
-  "password"     TEXT               NOT NULL,
+  "id"         SERIAL PRIMARY KEY NOT NULL,
+  "name"       TEXT               NOT NULL,
+  "username"   TEXT               NOT NULL,
+  UNIQUE ("username"),
+  "password"   TEXT               NOT NULL,
   "privateKey" TEXT               NOT NULL,
-  UNIQUE("privateKey"),
+  UNIQUE ("privateKey"),
   "publicKey"  TEXT               NOT NULL,
-  UNIQUE("publicKey")
+  UNIQUE ("publicKey")
 );
 
 ALTER TABLE public."Teacher"
