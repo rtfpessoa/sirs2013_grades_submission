@@ -26,16 +26,16 @@ INSERT INTO public."Teacher" VALUES (3, 'Paulo', 'ist169298', '5f4dcc3b5aa765d61
 
 CREATE TABLE public."Student"
 (
-  id       SERIAL PRIMARY KEY NOT NULL,
-  name     TEXT               NOT NULL,
-  username TEXT               NOT NULL
+  "id"       SERIAL PRIMARY KEY NOT NULL,
+  "name"     TEXT               NOT NULL,
+  "username" TEXT               NOT NULL
 );
 
 CREATE TABLE public."Class"
 (
-  id         SERIAL PRIMARY KEY NOT NULL,
-  name       TEXT               NOT NULL,
-  department TEXT               NOT NULL
+  "id"         SERIAL PRIMARY KEY NOT NULL,
+  "name"       TEXT               NOT NULL,
+  "department" TEXT               NOT NULL
 );
 
 INSERT INTO public."Class" VALUES (1, 'Segurança Informática em Redes e Sistemas', 'DEI');
@@ -43,24 +43,24 @@ INSERT INTO public."Class" VALUES (2, 'Arquitecturas de Software', 'DEI');
 
 CREATE TABLE public."Teaching"
 (
-  id        SERIAL PRIMARY KEY NOT NULL,
-  teacherId BIGINT REFERENCES public."Teacher",
-  classId   BIGINT REFERENCES public."Class"
+  "id"        SERIAL PRIMARY KEY NOT NULL,
+  "teacherId" BIGINT REFERENCES public."Teacher",
+  "classId"   BIGINT REFERENCES public."Class"
 );
 
 INSERT INTO public."Teaching" VALUES (1, 3, 1);
 
 CREATE TABLE public."Enrollment"
 (
-  id        SERIAL PRIMARY KEY NOT NULL,
-  studentId BIGINT REFERENCES public."Student",
-  classId   BIGINT REFERENCES public."Class"
+  "id"        SERIAL PRIMARY KEY NOT NULL,
+  "studentId" BIGINT REFERENCES public."Student",
+  "classId"   BIGINT REFERENCES public."Class"
 );
 
 # --- !Downs
 
-DROP TABLE public."Enrollment";
-DROP TABLE public."Teaching";
-DROP TABLE public."Class";
-DROP TABLE public."Student";
-DROP TABLE public."Teacher";
+DROP TABLE public."Enrollment" CASCADE;
+DROP TABLE public."Teaching" CASCADE;
+DROP TABLE public."Class" CASCADE;
+DROP TABLE public."Student" CASCADE;
+DROP TABLE public."Teacher" CASCADE;
