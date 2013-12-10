@@ -13,8 +13,6 @@ object Application extends Controller with Secured {
     Ok(views.html.index(classes))
   }
 
-  case class GradesViewModel(student: Student, grade: Long)
-
   private val classForm = Form(
     single(
       "classId" -> number
