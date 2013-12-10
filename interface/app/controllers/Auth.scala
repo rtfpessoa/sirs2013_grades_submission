@@ -43,7 +43,7 @@ object Auth extends Controller {
     implicit request =>
       loginForm.bindFromRequest.fold(
         formWithErrors => BadRequest(views.html.login()),
-        user => Redirect(routes.Application.index).withSession(Security.username -> user._1)
+        user => Redirect(routes.Application.teacher).withSession(Security.username -> user._1)
       )
   }
 

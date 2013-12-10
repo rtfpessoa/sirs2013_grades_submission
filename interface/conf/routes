@@ -4,6 +4,8 @@
 
 # Home page
 GET         /                    controllers.Application.index
+POST        /grades              controllers.Application.grades
+GET         /teacher             controllers.Application.teacher
 
 GET         /login               controllers.Auth.login
 POST        /login               controllers.Auth.authenticate
