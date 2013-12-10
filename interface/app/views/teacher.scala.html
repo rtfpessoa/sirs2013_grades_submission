@@ -1,4 +1,4 @@
-@(teacher: model.Teacher)
+@(teacher: model.Teacher, classes: Seq[model.Clazz])
 
 <!DOCTYPE html>
 
@@ -12,5 +12,18 @@
     </head>
     <body>
         <h1>Logged in: @teacher.name</h1>
+        <form class="form-signin" role="form" action="@routes.Application.selectCurse" method="post">
+            <div class="col-md-4 col-md-offset-4">
+                <select class="form-control" name="classId">
+                @for(clazz <- classes) {
+                    <option value="@clazz.id">@clazz.name</option>
+                }
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-primary" type="submit">Lookup</button>
+            </div>
+
+        </form>
     </body>
 </html>

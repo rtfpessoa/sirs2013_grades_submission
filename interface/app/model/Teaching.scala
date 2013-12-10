@@ -15,12 +15,22 @@ object TeachingFactory {
 
 object TeachingTable extends Table[Teaching]("Teaching") with BaseTable[Teaching] {
 
-  def teachingId = column[Long]("teachingId")
+  def teacherId = column[Long]("teacherId")
 
   def classId = column[Long]("classId")
 
-  def * = id ~ teachingId ~ classId <>(Teaching, Teaching.unapply _)
+  def * = id ~ teacherId ~ classId <>(Teaching, Teaching.unapply _)
 
-  def auto = teachingId ~ classId <>(TeachingFactory.apply, TeachingFactory.unapply _)
+  def auto = teacherId ~ classId <>(TeachingFactory.apply, TeachingFactory.unapply _)
+
+  def getClassesOfTeacher(teacherId: Long): Seq[Clazz] = {
+    BasicDB.withConnection {
+      connection =>
+        implicit session: Session =>
+          (for (teaching <- this if teaching.teacherId === teacherId) yield teaching.classId).list
+    }.map {
+    	classId => ClassTable.getById(classId)
+    }.flatten
+  }
 
 }

@@ -48,6 +48,8 @@ CREATE TABLE public."Teaching"
   classId   BIGINT REFERENCES public."Class"
 );
 
+INSERT INTO public."Teaching" VALUES (1, 3, 1);
+
 CREATE TABLE public."Enrollment"
 (
   id        SERIAL PRIMARY KEY NOT NULL,

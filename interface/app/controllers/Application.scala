@@ -2,7 +2,7 @@ package controllers
 
 import play.api.mvc._
 import controllers.traits.Secured
-import model.{ClassTable, Student}
+import model.{ClassTable, Student, TeachingTable}
 import play.api.data._
 import play.api.data.Forms._
 
@@ -34,7 +34,11 @@ object Application extends Controller with Secured {
 
   def teacher = withTeacher {
     teacher => implicit request =>
-      Ok(views.html.teacher(teacher))
+      Ok(views.html.teacher(teacher, TeachingTable.getClassesOfTeacher(teacher.id)))
+  }
+
+  def selectCurse = Action {
+    Ok("Hello world")
   }
 
 }
