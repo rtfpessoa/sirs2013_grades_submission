@@ -12,7 +12,8 @@ object ApplicationBuild extends Build {
     jdbc,
     anorm,
     "play" %% "play" % "2.1.3" exclude("org.scala-lang", "scala-reflect"),
-    "com.typesafe.play" %% "play-slick" % "0.5.0.8"
+    "com.typesafe.play" %% "play-slick" % "0.5.0.8",
+    "org.postgresql" % "postgresql" % "9.2-1003-jdbc4"
   )
 
 

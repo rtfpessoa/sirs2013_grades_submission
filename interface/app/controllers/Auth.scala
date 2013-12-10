@@ -39,7 +39,7 @@ object Auth extends Controller {
     }
   }
 
-  private def authenticate = Action {
+  def authenticate = Action {
     implicit request =>
       loginForm.bindFromRequest.fold(
         formWithErrors => BadRequest(views.html.login()),

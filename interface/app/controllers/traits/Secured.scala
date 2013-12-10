@@ -7,7 +7,7 @@ trait Secured {
 
   private def username(request: RequestHeader) = request.session.get(Security.username)
 
-  private def onUnauthorized(request: RequestHeader) = Results.Redirect(controllers.routes.Auth.login)
+  private def onUnauthorized(request: RequestHeader) = Results.Redirect(controllers.routes.Auth.authenticate)
 
   private def withAuth(f: => String => Request[AnyContent] => Result) = {
     Security.Authenticated(username, onUnauthorized) {
