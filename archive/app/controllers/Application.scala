@@ -10,12 +10,16 @@ object Application extends Controller {
   case class IndexViewModel(courseId: Int, courseName: String)
 
   def index = Action {
-    val courses = for (file <- StorageRules.gradesDir.listFiles if file.getName endsWith "-grades.txt") yield {
-      val fileNameParts = file.getName.split("-")
-      val courseId = fileNameParts(0).toInt
-      IndexViewModel(courseId, "Nome")
+    if (StorageRules.gradesDir.exists()) {
+      val courses = for (file <- StorageRules.gradesDir.listFiles if file != null && (file.getName endsWith "-grades.txt")) yield {
+        val fileNameParts = file.getName.split("-")
+        val courseId = fileNameParts(0).toInt
+        IndexViewModel(courseId, "Nome")
+      }
+      Ok(views.html.index(courses))
+    } else {
+      Ok(views.html.index(Seq()))
     }
-    Ok(views.html.index(courses))
   }
 
   case class GradesViewModel(student: String, grade: Long)
