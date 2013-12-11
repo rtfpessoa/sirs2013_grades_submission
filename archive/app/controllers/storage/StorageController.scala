@@ -2,7 +2,6 @@ package controllers.storage
 
 import play.api.mvc._
 import play.api.libs.json.Json
-import controllers.crypto.Crypto
 import play.api.libs.ws.WS
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -10,6 +9,8 @@ import rules.StorageRules.StorageRules
 import play.api.data._
 import play.api.data.Forms._
 import java.io.FileInputStream
+import rules.crypto.Crypto
+import java.security.PublicKey
 
 object StorageController extends Controller {
 
@@ -77,23 +78,27 @@ object StorageController extends Controller {
       action.getOrElse(Ok(Json.obj("error" -> "")))
   }
 
-  def getTeacherKey(teacher: String) = {
-    if (!Crypto.hasKey(teacher)) {
-      val responsePromise = WS.url("http://localhost:9000/security/key/" + teacher).get()
-      val json = Await.result(responsePromise, Duration(5, "seconds")).json
-      val keyOption = (json \ "key").asOpt[String]
+  def getTeacherKey(teacher: String): Option[PublicKey] = {
+    val responsePromise = WS.url("http://localhost:9000/security/key/" + teacher).get()
+    val json = Await.result(responsePromise, Duration(5, "seconds")).json
+    val keyOption = (json \ "key").asOpt[String]
 
-      if (keyOption.isDefined) {
-        Crypto.saveKey(teacher, keyOption.get)
-      }
+    if (keyOption.isDefined) {
+      val keyBytes = Crypto.getBytesFromString(keyOption.get)
+      Some(Crypto.getPublicKeyFromBytes(keyBytes))
+    } else {
+      None
     }
-
-    Crypto.loadKey(teacher)
   }
 
   def checkSignature(teacher: String, signature: Array[Byte], xml: Array[Byte]) = {
     val teacherKey = getTeacherKey(teacher)
 
-    Crypto.verify(teacherKey, signature, xml)
+    if (teacherKey.isDefined) {
+      Crypto.verify(teacherKey.get, signature, xml)
+    } else {
+      false
+    }
+
   }
 }

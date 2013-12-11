@@ -11,3 +11,6 @@ GET         /assets/*file           controllers.Assets.at(path="/public", file)
 # Storage
 POST        /storage                controllers.storage.StorageController.index
 POST        /storage/receive        controllers.storage.StorageController.receive
+
+# Security
+POST        /updatekey              controllers.crypto.CryptoController.updatekey
