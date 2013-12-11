@@ -2,7 +2,7 @@ package controllers.crypto
 
 import java.security._
 import java.security.spec.X509EncodedKeySpec
-import java.io.{PrintWriter, FileInputStream, File}
+import java.io.{PrintWriter, File}
 import play.api.Play
 import play.api.Play.current
 
@@ -21,16 +21,17 @@ object Crypto {
   def loadKey(teacher: String): PublicKey = {
     val fileKey = getKeyFile(teacher)
 
-    val fis = new FileInputStream(keysDir + "/" + teacher + ".key")
-    val encodedKey = new Array[Byte](fileKey.length.toInt)
-    fis.read(encodedKey)
-    fis.close()
+    val encodedKey = scala.io.Source.fromFile(fileKey).getLines().mkString.toCharArray.map(_.toByte)
 
     val keySpec = new X509EncodedKeySpec(encodedKey)
     keyFactory.generatePublic(keySpec)
   }
 
   def saveKey(teacher: String, key: String) = {
+    if (!keysDir.exists()) {
+      keysDir.mkdirs()
+    }
+
     val keyWriter = new PrintWriter(getKeyFile(teacher))
     keyWriter.write(key)
     keyWriter.close()

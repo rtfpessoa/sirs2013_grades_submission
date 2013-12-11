@@ -4,16 +4,12 @@ import play.api.mvc._
 import java.io.{PrintWriter, File}
 import play.api.libs.json.Json
 import controllers.crypto.Crypto
-import play.api.Play
-import play.api.Play.current
 import play.api.libs.ws.WS
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import rules.StorageRules.StorageRules
 
 object StorageController extends Controller {
-
-  private val currentDir = new File("").getAbsolutePath
-
   def index(clazz: String, teacher: String) = Action {
     val folder = new File(".")
 
@@ -36,11 +32,11 @@ object StorageController extends Controller {
           val course = (xml \ "course" \ "@name").toString()
 
           if (checkSignature(teacher, signature, xml.toString().getBytes)) {
-            val gradesWriter = new PrintWriter(getSignatureFile(course, teacher))
+            val gradesWriter = new PrintWriter(StorageRules.getSignatureFile(course, teacher))
             gradesWriter.write(xml.toString())
             gradesWriter.close()
 
-            val signatureWriter = new PrintWriter(getGradesFile(course, teacher))
+            val signatureWriter = new PrintWriter(StorageRules.getGradesFile(course, teacher))
             signatureWriter.write(signatureString)
             signatureWriter.close()
 
@@ -72,15 +68,5 @@ object StorageController extends Controller {
     val teacherKey = getTeacherKey(teacher)
 
     Crypto.verify(teacherKey, signature, xml)
-  }
-
-  private val gradesDir = new File(currentDir + "/" + Play.configuration.getString("grades.dir").get).getAbsolutePath
-
-  private def getGradesFile(clazz: String, teacher: String) = {
-    new File(gradesDir + "/" + clazz + "-" + teacher + "-grades.txt")
-  }
-
-  private def getSignatureFile(clazz: String, teacher: String) = {
-    new File(gradesDir + "/" + clazz + "-" + teacher + "-grades-signature.txt")
   }
 }
