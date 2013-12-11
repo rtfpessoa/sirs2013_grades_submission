@@ -29,7 +29,7 @@ object Archive {
 
   def sendGrades(grades: ClassGrades) = {
     val teacherPrivateKey = TeacherTable.getByUsername(grades.teacherUsername).get.privateKey
-    val keyBytes = SecureStringFactory.fromSecureString(teacherPrivateKey.get).getBytes
+    val keyBytes = SecureStringFactory.fromSecureString(teacherPrivateKey.get)
     val signature = Crypto.sign(Crypto.decodePrivateKey(keyBytes), grades.toString().getBytes)
 
     val postData = Json.obj(
