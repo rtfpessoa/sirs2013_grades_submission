@@ -27,7 +27,7 @@ object Archive {
 
   private val URL = "http://localhost:9001/storage/receive"
 
-  def sendGrades(grades: ClassGrades) = {
+  def sendGrades(grades: ClassGrades): Unit = {
     val teacherPrivateKey = TeacherTable.getByUsername(grades.teacherUsername).get.privateKey
     val keyBytes = SecureStringFactory.fromSecureString(teacherPrivateKey.get)
     val signature = Crypto.sign(Crypto.decodePrivateKey(keyBytes), grades.toString().getBytes)

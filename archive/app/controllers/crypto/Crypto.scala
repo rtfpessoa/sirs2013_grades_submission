@@ -1,38 +1,12 @@
 package controllers.crypto
 
-import java.io._
 import java.security._
-import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
-import javax.crypto._
-import scala.Function.const
-
-/**
- * User: rtfpessoa
- * Date: 10/12/13
- * Time: 11:57
- */
+import java.io.{PrintWriter, FileInputStream, File}
+import play.api.Play
+import play.api.Play.current
 
 object Crypto {
-  def encrypt(key: PublicKey, data: Array[Byte]): Array[Byte] = {
-    val cipher = Cipher.getInstance("RSA")
-    cipher.init(Cipher.ENCRYPT_MODE, key)
-    cipher.doFinal(data)
-  }
-
-  def decrypt(key: PrivateKey, data: Array[Byte]): Array[Byte] = {
-    val cipher = Cipher.getInstance("RSA")
-    cipher.init(Cipher.DECRYPT_MODE, key)
-    cipher.doFinal(data)
-  }
-
-  def sign(key: PrivateKey, data: Array[Byte]): Array[Byte] = {
-    val signer = Signature.getInstance("SHA1withRSA")
-    signer.initSign(key)
-    signer.update(data)
-    signer.sign
-  }
-
   def verify(key: PublicKey, signature: Array[Byte], data: Array[Byte]): Boolean = {
     val verifier = Signature.getInstance("SHA1withRSA")
     verifier.initVerify(key)
@@ -40,41 +14,33 @@ object Crypto {
     verifier.verify(signature)
   }
 
-  def readPrivateKey(filePath: String): PrivateKey =
-    decodePrivateKey(readEncodedRSAKey(filePath))
+  private val currentDir = new File(".").getAbsolutePath
+  private val keyFactory = KeyFactory.getInstance("RSA")
+  private val keysDir = new File(currentDir + "/" + Play.configuration.getString("keys.dir").get)
 
-  def readPublicKey(filePath: String): PublicKey =
-    decodePublicKey(readEncodedRSAKey(filePath))
+  def loadKey(teacher: String): PublicKey = {
+    val fileKey = getKeyFile(teacher)
 
-  private def readEncodedRSAKey(filePath: String): Array[Byte] = {
-    withDataInputStream(filePath) {
-      stream =>
-        val nameLength = stream.readInt
-        stream.skip(nameLength)
+    val fis = new FileInputStream(keysDir + "/" + teacher + ".key")
+    val encodedKey = new Array[Byte](fileKey.length.toInt)
+    fis.read(encodedKey)
+    fis.close()
 
-        val keyLength = stream.readInt
-        val key: Array[Byte] = Array.ofDim(keyLength)
-        stream.read(key)
-
-        key
-    }
+    val keySpec = new X509EncodedKeySpec(encodedKey)
+    keyFactory.generatePublic(keySpec)
   }
 
-  private def decodePrivateKey(encodedKey: Array[Byte]): PrivateKey = {
-    val spec = new PKCS8EncodedKeySpec(encodedKey)
-    val factory = KeyFactory.getInstance("RSA")
-    factory.generatePrivate(spec)
+  def saveKey(teacher: String, key: String) = {
+    val keyWriter = new PrintWriter(getKeyFile(teacher))
+    keyWriter.write(key)
+    keyWriter.close()
   }
 
-  private def decodePublicKey(encodedKey: Array[Byte]): PublicKey = {
-    val spec = new X509EncodedKeySpec(encodedKey)
-    val factory = KeyFactory.getInstance("RSA")
-    factory.generatePublic(spec)
+  def hasKey(teacher: String) = {
+    getKeyFile(teacher).exists()
   }
 
-  private def withCloseable[A <: Closeable, B](closeable: A)(f: A => B): B =
-    const(f(closeable))(closeable.close)
-
-  private def withDataInputStream[A](filePath: String): (DataInputStream => A) => A =
-    withCloseable(new DataInputStream(new FileInputStream(filePath)))(_)
+  private def getKeyFile(teacher: String) = {
+    new File(keysDir + "/" + teacher + ".key")
+  }
 }

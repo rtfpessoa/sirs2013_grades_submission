@@ -1,8 +1,7 @@
 package util
 
 import java.security._
-import java.security.spec.{X509EncodedKeySpec, PKCS8EncodedKeySpec}
-import scala.Predef.String
+import java.security.spec.PKCS8EncodedKeySpec
 
 object Crypto {
 
@@ -29,11 +28,11 @@ object Crypto {
     val privateKey: PrivateKey = keyPair.getPrivate
     val publicKey: PublicKey = keyPair.getPublic
 
-    val x509EncodedKeySpec: X509EncodedKeySpec = new X509EncodedKeySpec(publicKey.getEncoded)
-    val pkcs8EncodedKeySpec: PKCS8EncodedKeySpec = new PKCS8EncodedKeySpec(privateKey.getEncoded)
+    val publicKeyBytes = publicKey.getEncoded
+    val privateKeyBytes = privateKey.getEncoded
 
-    val publicKeyString = new String(x509EncodedKeySpec.getEncoded.map(_.toChar))
-    val privateKeyString = new String(pkcs8EncodedKeySpec.getEncoded.map(_.toChar))
+    val publicKeyString = new scala.Predef.String(publicKeyBytes.map(_.toChar))
+    val privateKeyString = new scala.Predef.String(privateKeyBytes.map(_.toChar))
 
     (publicKeyString, privateKeyString)
   }

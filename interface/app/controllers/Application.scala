@@ -5,8 +5,7 @@ import controllers.traits.Secured
 import model.{CourseTable, Student, TeachingTable, EnrollmentTable}
 import play.api.data._
 import play.api.data.Forms._
-import rules.ClassGrades
-import rules.StudentGrade
+import rules.{Archive, ClassGrades, StudentGrade}
 import play.api.libs.json.Json
 
 object Application extends Controller with Secured {
@@ -71,12 +70,9 @@ object Application extends Controller with Secured {
       }, {
         case classGrades: ClassGrades => {
 
-          Ok(Json.obj("success" ->
-            s"""
-            |${classGrades.className}
-            |${classGrades.teacherUsername}
-            |${classGrades.grades.mkString(",")}
-          """.stripMargin))
+          Archive.sendGrades(classGrades)
+
+          Ok(Json.obj("success" -> ""))
         }
       })
   }

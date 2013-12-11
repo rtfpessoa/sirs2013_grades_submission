@@ -1,5 +1,5 @@
 import model.traits.SecureStringFactory
-import model.{Teacher, TeacherFactory, TeacherTable}
+import model.{Teacher, TeacherTable}
 import play.api._
 import util.Crypto
 
@@ -11,7 +11,7 @@ object Global extends GlobalSettings {
     TeacherTable.getAll.map {
       teacher =>
         if (teacher.privateKey.isEmpty) {
-          val (privateKey, publicKey) = Crypto.generateKeyPair()
+          val (publicKey, privateKey) = Crypto.generateKeyPair()
           TeacherTable.update(Teacher(teacher.id, teacher.name, teacher.username, teacher.password,
             Some(SecureStringFactory.toSecureString(publicKey)), Some(SecureStringFactory.toSecureString(privateKey))))
         }
