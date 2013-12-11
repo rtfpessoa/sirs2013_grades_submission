@@ -2,7 +2,7 @@ package controllers
 
 import play.api.mvc._
 import controllers.traits.Secured
-import model.{CourseTable, Student, TeachingTable, EnrollmentTable}
+import model.{CourseTable, TeachingTable, EnrollmentTable}
 import play.api.data._
 import play.api.data.Forms._
 import rules.{Archive, ClassGrades, StudentGrade}
@@ -10,39 +10,20 @@ import play.api.libs.json.Json
 
 object Application extends Controller with Secured {
 
-  def index = Action {
-    val classes = CourseTable.getAll
-    Ok(views.html.index(classes))
-  }
-
-  case class GradesViewModel(student: Student, grade: Long)
-
   private val classForm = Form(
     single(
       "classId" -> number
     ))
 
-  def grades = Action {
-    implicit request =>
-      classForm.bindFromRequest.fold(
-        formWithErrors => BadRequest(controllers.routes.Application.index().url),
-        classId => {
-          // TODO: Get grades from Archive
-
-          Ok(views.html.grades(""))
-        }
-      )
-  }
-
-  def teacher = withTeacher {
+  def index = withTeacher {
     teacher => implicit request =>
-      Ok(views.html.teacher(teacher, TeachingTable.getClassesOfTeacher(teacher.id)))
+      Ok(views.html.index(teacher, TeachingTable.getClassesOfTeacher(teacher.id)))
   }
 
   def selectCourse = withTeacher {
     teacher => implicit request =>
       classForm.bindFromRequest.fold(
-        formWithErrors => BadRequest(controllers.routes.Application.teacher().url),
+        formWithErrors => BadRequest(controllers.routes.Application.index().url),
         classId => {
           Ok(views.html.assigngrades(teacher, CourseTable.getById(classId).get, EnrollmentTable.getStudentsOfClass(classId)))
         }
@@ -52,7 +33,7 @@ object Application extends Controller with Secured {
   val gradesForm = Form(
     mapping(
       "teacher" -> text,
-      "clazz" -> text,
+      "course" -> text,
       "grades" -> seq(
         mapping(
           "username" -> text,
