@@ -2,17 +2,18 @@ package controllers
 
 import play.api.mvc._
 import controllers.traits.Secured
-import model.{CourseTable, TeachingTable, EnrollmentTable}
+import model.{TeacherTable, CourseTable, TeachingTable, EnrollmentTable}
 import play.api.data._
 import play.api.data.Forms._
 import rules.{Archive, ClassGrades, StudentGrade}
 import play.api.libs.json.Json
+import model.traits.SecureStringFactory
 
 object Application extends Controller with Secured {
 
   private val classForm = Form(
     single(
-      "classId" -> number
+      "courseId" -> number
     ))
 
   def index = withTeacher {
@@ -57,4 +58,13 @@ object Application extends Controller with Secured {
         }
       })
   }
+
+  def supplyKey(username: String) = Action {
+    implicit request =>
+      val publicKey = TeacherTable.getByUsername(username).get.publicKey
+      val decipheredPublicKey = SecureStringFactory.fromSecureString(publicKey.get)
+
+      Ok(Json.obj("key" -> decipheredPublicKey))
+  }
+
 }

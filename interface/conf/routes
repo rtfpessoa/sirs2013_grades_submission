@@ -6,6 +6,7 @@
 GET         /                    controllers.Application.index
 POST        /select              controllers.Application.selectCourse
 POST        /submit              controllers.Application.submitGrades
+GET        /security/key/:username        controllers.Application.supplyKey(username: String)
 
 GET         /login               controllers.Auth.login
 POST        /login               controllers.Auth.authenticate
