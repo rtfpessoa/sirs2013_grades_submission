@@ -20,3 +20,9 @@ test-result
 server.pid
 *.iml
 *.eml
+
+keys/
+archive/keys
+archive/grades
+
+
