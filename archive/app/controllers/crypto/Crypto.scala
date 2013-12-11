@@ -36,7 +36,7 @@ object Crypto {
     }
 
     val fos = new FileOutputStream(getKeyFile(teacher))
-    val keyBytes = key.toCharArray.map(_.toByte)
+    val keyBytes = getBytesFromString(key)
     fos.write(keyBytes)
     fos.close()
   }
@@ -47,5 +47,13 @@ object Crypto {
 
   private def getKeyFile(teacher: String) = {
     new File(keysDir + "/" + teacher + ".key")
+  }
+
+  def getBytesFromString(string: String): Array[Byte] = {
+    string.toCharArray.map(_.toByte)
+  }
+
+  def getStringFromBytes(string: String): Array[Byte] = {
+    string.toCharArray.map(_.toByte)
   }
 }

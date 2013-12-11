@@ -1,7 +1,7 @@
 package controllers.storage
 
 import play.api.mvc._
-import java.io.{FileOutputStream, File}
+import java.io.File
 import play.api.libs.json.Json
 import controllers.crypto.Crypto
 import play.api.libs.ws.WS
@@ -26,14 +26,14 @@ object StorageController extends Controller {
       val action = (xmlOption, signatureOption) match {
         case (Some(xmlString), Some(signatureString)) =>
           val xml = scala.xml.XML.loadString(xmlString)
-          val signatureBytes = signatureString.toCharArray.map(_.toByte)
+          val signatureBytes = Crypto.getBytesFromString(signatureString)
 
           val teacherUsername = (xml \ "teacher" \ "@username").toString()
           val courseId = (xml \ "course" \ "@id").toString().toInt
 
-          val gradesBytes = xml.toString().toCharArray.map(_.toByte)
+          val gradesBytes = Crypto.getBytesFromString(xml.toString())
           if (checkSignature(teacherUsername, signatureBytes, gradesBytes)) {
-            saveGrades(teacherUsername, courseId, signatureBytes, gradesBytes)
+            StorageRules.saveGrades(teacherUsername, courseId, signatureBytes, gradesBytes)
 
             Some(Ok(Json.obj("success" -> "")))
           }
@@ -65,19 +65,5 @@ object StorageController extends Controller {
     val teacherKey = getTeacherKey(teacher)
 
     Crypto.verify(teacherKey, signature, xml)
-  }
-
-  def saveGrades(teacherUsername: String, courseId: Int, grades: Array[Byte], signature: Array[Byte]) = {
-    if (!StorageRules.gradesDir.exists()) {
-      StorageRules.gradesDir.mkdirs()
-    }
-
-    val fosg = new FileOutputStream(StorageRules.getGradesFile(teacherUsername, courseId))
-    fosg.write(grades)
-    fosg.close()
-
-    val foss = new FileOutputStream(StorageRules.getGradesFile(teacherUsername, courseId))
-    foss.write(signature)
-    foss.close()
   }
 }
