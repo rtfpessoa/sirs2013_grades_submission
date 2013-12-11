@@ -5,6 +5,8 @@ import play.api.libs.json.Json
 import util.Crypto
 import model.TeacherTable
 import model.traits.SecureStringFactory
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 
 case class StudentGrade(username: String, grade: Int) {
   override def toString =
@@ -27,7 +29,7 @@ object Archive {
 
   private val URL = "http://localhost:9001/storage/receive"
 
-  def sendGrades(grades: ClassGrades): Unit = {
+  def sendGrades(grades: ClassGrades) = {
     val teacherPrivateKey = TeacherTable.getByUsername(grades.teacherUsername).get.privateKey
     val keyBytes = SecureStringFactory.fromSecureString(teacherPrivateKey.get)
     val signature = Crypto.sign(Crypto.decodePrivateKey(keyBytes), grades.toString().getBytes)
@@ -37,7 +39,8 @@ object Archive {
       "signature" -> new String(signature)
     )
 
-    WS.url(URL).post(postData)
+    val responsePromise = WS.url(URL).post(postData)
+    Await.result(responsePromise, Duration(5, "seconds")).body
   }
 
 }

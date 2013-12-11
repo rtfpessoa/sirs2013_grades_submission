@@ -51,9 +51,9 @@ object Application extends Controller with Secured {
       }, {
         case classGrades: ClassGrades => {
 
-          Archive.sendGrades(classGrades)
+          val response = Archive.sendGrades(classGrades)
 
-          Ok(Json.obj("success" -> ""))
+          Ok(Json.obj("success" -> response))
         }
       })
   }

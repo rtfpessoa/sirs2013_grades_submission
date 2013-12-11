@@ -19,39 +19,35 @@ object StorageController extends Controller {
 
   def receive = Action {
     request =>
-      val payload = request.getQueryString("payload")
+      val json = request.body.asJson.get
 
-      request.queryString.map(println)
+      val xmlOption = (json \ "xml").asOpt[String]
+      val signatureOption = (json \ "signature").asOpt[String]
 
-      val action = payload.map {
-        message =>
-          val messageJson = Json.parse(message)
-
-          val xmlString = (messageJson \ "xml").as[String]
+      val action = (xmlOption, signatureOption) match {
+        case (Some(xmlString), Some(signatureString)) =>
           val xml = scala.xml.XML.loadString(xmlString)
-
-          val signature = (messageJson \ "signature").as[String]
+          val signature = signatureString.toCharArray.map(_.toByte)
 
           val teacher = (xml \ "teacher" \ "@name").toString()
           val clazz = (xml \ "class" \ "@name").toString()
-          println("START")
-          if (checkSignature(teacher, signature.getBytes, xmlString.getBytes)) {
-            println("STORING")
+
+          if (checkSignature(teacher, signature, xml.toString().getBytes)) {
             val gradesWriter = new PrintWriter(getSignatureFile(clazz, teacher))
             gradesWriter.write(xml.toString())
             gradesWriter.close()
 
             val signatureWriter = new PrintWriter(getGradesFile(clazz, teacher))
-            signatureWriter.write(signature)
+            signatureWriter.write(signatureString)
             signatureWriter.close()
 
             Some(Ok(Json.obj("success" -> "")))
           } else {
-            println("FAILING")
             None
           }
-      }.getOrElse(None)
-      println("HERE")
+        case _ => None
+      }
+
       action.getOrElse(Ok(Json.obj("error" -> "")))
   }
 
