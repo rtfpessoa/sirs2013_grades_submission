@@ -22,7 +22,7 @@
             <div class="row">
                 <form class="form-signin" role="form" action="@routes.Application.grades" method="post">
                     <div class="col-md-4 col-md-offset-4">
-                        <select class="form-control" name="classId">
+                        <select class="form-control" name="courseName">
                         @for(course <- courses) {
                             <option value="@course">@course</option>
                         }
