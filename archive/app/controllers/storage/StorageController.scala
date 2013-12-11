@@ -10,10 +10,10 @@ import scala.concurrent.duration.Duration
 import rules.StorageRules.StorageRules
 
 object StorageController extends Controller {
-  def index(clazz: String, teacher: String) = Action {
+  def index(course: Int, teacher: String) = Action {
     val folder = new File(".")
 
-    Ok(Json.obj("class" -> clazz, "teacher" -> teacher))
+    Ok(Json.obj("class" -> course, "teacher" -> teacher))
   }
 
   def receive = Action {
@@ -28,15 +28,15 @@ object StorageController extends Controller {
           val xml = scala.xml.XML.loadString(xmlString)
           val signature = signatureString.toCharArray.map(_.toByte)
 
-          val teacher = (xml \ "teacher" \ "@username").toString()
-          val course = (xml \ "course" \ "@name").toString()
+          val teacherUsername = (xml \ "teacher" \ "@username").toString()
+          val courseId = (xml \ "course" \ "@id").toString().toInt
 
-          if (checkSignature(teacher, signature, xml.toString().getBytes)) {
-            val gradesWriter = new PrintWriter(StorageRules.getSignatureFile(course, teacher))
+          if (checkSignature(teacherUsername, signature, xml.toString().toCharArray.map(_.toByte))) {
+            val gradesWriter = new PrintWriter(StorageRules.getSignatureFile(teacherUsername, courseId))
             gradesWriter.write(xml.toString())
             gradesWriter.close()
 
-            val signatureWriter = new PrintWriter(StorageRules.getGradesFile(course, teacher))
+            val signatureWriter = new PrintWriter(StorageRules.getGradesFile(teacherUsername, courseId))
             signatureWriter.write(signatureString)
             signatureWriter.close()
 
@@ -44,7 +44,8 @@ object StorageController extends Controller {
           } else {
             None
           }
-        case _ => None
+        case _ =>
+          None
       }
 
       action.getOrElse(Ok(Json.obj("error" -> "")))
@@ -64,7 +65,7 @@ object StorageController extends Controller {
     Crypto.loadKey(teacher)
   }
 
-  def checkSignature(teacher: String, xml: Array[Byte], signature: Array[Byte]) = {
+  def checkSignature(teacher: String, signature: Array[Byte], xml: Array[Byte]) = {
     val teacherKey = getTeacherKey(teacher)
 
     Crypto.verify(teacherKey, signature, xml)

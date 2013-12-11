@@ -32,11 +32,12 @@ object Archive {
   def sendGrades(grades: ClassGrades) = {
     val teacherPrivateKey = TeacherTable.getByUsername(grades.teacherUsername).get.privateKey
     val keyBytes = SecureStringFactory.fromSecureString(teacherPrivateKey.get)
-    val signature = Crypto.sign(Crypto.decodePrivateKey(keyBytes), grades.toString().getBytes)
+    val xml = scala.xml.XML.loadString(grades.toString())
+    val signature = Crypto.sign(Crypto.decodePrivateKey(keyBytes), xml.toString().toCharArray.map(_.toByte))
 
     val postData = Json.obj(
       "xml" -> grades.toString,
-      "signature" -> new String(signature)
+      "signature" -> new scala.Predef.String(signature.map(_.toChar))
     )
 
     val responsePromise = WS.url(URL).post(postData)

@@ -1,16 +1,16 @@
 import sbt._
-import Keys._
 import play.Project._
 
 object ApplicationBuild extends Build {
 
-  val appName         = "archive"
-  val appVersion      = "1.0-SNAPSHOT"
+  val appName = "archive"
+  val appVersion = "1.0-SNAPSHOT"
 
   val appDependencies = Seq(
     // Add your project dependencies here,
     jdbc,
-    anorm
+    anorm,
+    "commons-io" % "commons-io" % "2.0"
   )
 
 
