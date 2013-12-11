@@ -9,6 +9,8 @@ import model.traits.SecureStringFactory._
 
 object Global extends GlobalSettings {
 
+  val RETRIES = 10
+
   override def onStart(app: Application) {
     Logger.info("Application has started")
 
@@ -28,7 +30,7 @@ object Global extends GlobalSettings {
     exchangeComunicationKey()
   }
 
-  def exchangeComunicationKey() = {
+  def exchangeComunicationKey(): Unit = {
     val URL = "http://localhost:9001/updatekey"
     val newKeyString = Crypto.generateSymetricKey()
 
@@ -38,8 +40,18 @@ object Global extends GlobalSettings {
       "key" -> cipheredKey
     )
 
-    val responsePromise = WS.url(URL).post(postData)
-    val responseBody = Await.result(responsePromise, Duration(5, "seconds")).body
+    for (i <- 0 to RETRIES) {
+      val responsePromise = WS.url(URL).post(postData)
+      val response = Await.result(responsePromise, Duration(5, "seconds")).body
+      val json = Json.parse(response)
+
+      if ((json \ "success").asOpt[String].isDefined) {
+        println("The communication key was exchanged with success!")
+        return
+      }
+    }
+
+    println("Ups: there was a problem establishing the communication key")
   }
 
   override def onStop(app: Application) {
