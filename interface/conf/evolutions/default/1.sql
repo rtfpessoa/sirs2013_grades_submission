@@ -7,9 +7,9 @@ CREATE TABLE public."Teacher"
   "username"   TEXT               NOT NULL,
   UNIQUE ("username"),
   "password"   TEXT               NOT NULL,
-  "privateKey" TEXT               ,
+  "privateKey" TEXT,
   UNIQUE ("privateKey"),
-  "publicKey"  TEXT               ,
+  "publicKey"  TEXT,
   UNIQUE ("publicKey")
 );
 
@@ -20,9 +20,9 @@ ADD CONSTRAINT "unique_privateKey" UNIQUE ("privateKey");
 ALTER TABLE public."Teacher"
 ADD CONSTRAINT "unique_publicKey" UNIQUE ("publicKey");
 
-INSERT INTO public."Teacher" VALUES (1, 'Rafael', 'ist169801', '5f4dcc3b5aa765d61d8327deb882cf99', NULL , NULL);
-INSERT INTO public."Teacher" VALUES (2, 'Rodrigo', 'ist169637', '5f4dcc3b5aa765d61d8327deb882cf99', NULL , NULL);
-INSERT INTO public."Teacher" VALUES (3, 'Paulo', 'ist169298', '5f4dcc3b5aa765d61d8327deb882cf99', NULL , NULL);
+INSERT INTO public."Teacher" VALUES (1, 'Rafael', 'ist169801', '5f4dcc3b5aa765d61d8327deb882cf99', NULL, NULL);
+INSERT INTO public."Teacher" VALUES (2, 'Rodrigo', 'ist169637', '5f4dcc3b5aa765d61d8327deb882cf99', NULL, NULL);
+INSERT INTO public."Teacher" VALUES (3, 'Paulo', 'ist169298', '5f4dcc3b5aa765d61d8327deb882cf99', NULL, NULL);
 
 CREATE TABLE public."Student"
 (

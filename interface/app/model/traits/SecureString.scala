@@ -16,10 +16,6 @@ object SecureStringFactory {
 
   def decipher(str: String): SecureString = SecureString(Crypto.decryptAES(str))
 
-  implicit def toSecureString(str: String): SecureString = SecureString(str)
-
-  implicit def fromSecureString(str: SecureString): String = str.toString
-
 }
 
 trait SecureTable {
