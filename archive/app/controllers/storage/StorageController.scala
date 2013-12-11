@@ -7,7 +7,7 @@ import play.api.libs.ws.WS
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import rules.StorageRules.StorageRules
-import play.api.data.Form
+import play.api.data._
 import play.api.data.Forms._
 
 object StorageController extends Controller {
@@ -16,13 +16,17 @@ object StorageController extends Controller {
 
   def index = Action {
     implicit request =>
-      Ok(views.html.grades(""))
+      courseForm.bindFromRequest.fold(
+        formWithErrors => BadRequest(controllers.routes.Application.index().url),
+        courseId => {
+          Ok(views.html.grades(""))
+        }
+      )
   }
 
   private val courseForm = Form(
-    tuple(
-      "courseId" -> number,
-      "teacherUsername" -> text
+    single(
+      "courseId" -> number
     ))
 
   def receive = Action {

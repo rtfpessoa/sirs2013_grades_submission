@@ -11,7 +11,7 @@ import model.traits.SecureStringFactory
 
 object Application extends Controller with Secured {
 
-  private val classForm = Form(
+  private val courseForm = Form(
     single(
       "courseId" -> number
     ))
@@ -23,7 +23,7 @@ object Application extends Controller with Secured {
 
   def selectCourse = withTeacher {
     teacher => implicit request =>
-      classForm.bindFromRequest.fold(
+      courseForm.bindFromRequest.fold(
         formWithErrors => BadRequest(controllers.routes.Application.index().url),
         classId => {
           Ok(views.html.assigngrades(teacher, CourseTable.getById(classId).get, EnrollmentTable.getStudentsOfClass(classId)))
