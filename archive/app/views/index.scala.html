@@ -1,4 +1,4 @@
-@(courses: Seq[String])
+@(models: Seq[controllers.Application.IndexViewModel])
 
 <!DOCTYPE html>
 
@@ -20,11 +20,11 @@
             </div>
 
             <div class="row">
-                <form class="form-signin" role="form" action="@routes.Application.grades" method="post">
+                <form class="form-signin" role="form" action="@controllers.storage.routes.StorageController.index()" method="post">
                     <div class="col-md-4 col-md-offset-4">
                         <select class="form-control" name="courseName">
-                        @for(course <- courses) {
-                            <option value="@course">@course</option>
+                        @for(model <- models) {
+                            <option value="@model.courseId">@model.courseName</option>
                         }
                         </select>
                     </div>

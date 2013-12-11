@@ -1,20 +1,29 @@
 package controllers.storage
 
 import play.api.mvc._
-import java.io.File
 import play.api.libs.json.Json
 import controllers.crypto.Crypto
 import play.api.libs.ws.WS
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import rules.StorageRules.StorageRules
+import play.api.data.Form
+import play.api.data.Forms._
 
 object StorageController extends Controller {
-  def index(course: Int, teacher: String) = Action {
-    val folder = new File(".")
 
-    Ok(Json.obj("class" -> course, "teacher" -> teacher))
+  case class GradesViewModel(student: String, grade: Long)
+
+  def index = Action {
+    implicit request =>
+      Ok(views.html.grades(""))
   }
+
+  private val courseForm = Form(
+    tuple(
+      "courseId" -> number,
+      "teacherUsername" -> text
+    ))
 
   def receive = Action {
     request =>
@@ -33,7 +42,7 @@ object StorageController extends Controller {
 
           val gradesBytes = Crypto.getBytesFromString(xml.toString())
           if (checkSignature(teacherUsername, signatureBytes, gradesBytes)) {
-            StorageRules.saveGrades(teacherUsername, courseId, signatureBytes, gradesBytes)
+            StorageRules.saveGrades(courseId, signatureBytes, gradesBytes)
 
             Some(Ok(Json.obj("success" -> "")))
           }

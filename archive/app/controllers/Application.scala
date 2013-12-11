@@ -3,25 +3,19 @@ package controllers
 import play.api.mvc._
 import play.api.data.Form
 import play.api.data.Forms._
-import scala.collection.JavaConversions._
-import java.io.{File}
-import java.util.{Scanner}
+import rules.StorageRules.StorageRules
 
 object Application extends Controller {
 
-  private val courseForm = Form(
-    single(
-      "courseName" -> text
-    ))
+  case class IndexViewModel(courseId: Int, courseName: String)
 
   def index = Action {
-    /*val classes = for(file <- StorageRules.gradesDir.listFiles if file.getName endsWith "-grades.txt") yield {
-      val fileNameParts = file.getname().split("-")
-      val course = fileNameParts[0]
-      val teacher = fileNameParts[1]
-      course + "-" + teacher
-    }*/
-    Ok(views.html.index(Seq("")))
+    val courses = for (file <- StorageRules.gradesDir.listFiles if file.getName endsWith "-grades.txt") yield {
+      val fileNameParts = file.getName.split("-")
+      val courseId = fileNameParts(0).toInt
+      IndexViewModel(courseId, "Nome")
+    }
+    Ok(views.html.index(courses))
   }
 
   case class GradesViewModel(student: String, grade: Long)
@@ -41,4 +35,5 @@ object Application extends Controller {
         }
       )
   }
+
 }
