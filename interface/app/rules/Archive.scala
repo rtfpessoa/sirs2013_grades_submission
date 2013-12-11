@@ -8,7 +8,7 @@ import model.traits.SecureStringFactory
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
-case class StudentGrade(name:String, username: String, grade: Int) {
+case class StudentGrade(name: String, username: String, grade: Int) {
   override def toString =
     s"""<student name="$name" username="$username" grade="$grade" />"""
 }
@@ -33,11 +33,11 @@ object Archive {
     val teacherPrivateKey = TeacherTable.getByUsername(grades.teacherUsername).get.privateKey
     val keyBytes = SecureStringFactory.fromSecureString(teacherPrivateKey.get)
     val xml = scala.xml.XML.loadString(grades.toString())
-    val signature = Crypto.sign(Crypto.decodePrivateKey(keyBytes), xml.toString().toCharArray.map(_.toByte))
+    val signature = Crypto.sign(Crypto.decodePrivateKey(keyBytes), Crypto.getBytesFromString(xml.toString()))
 
     val postData = Json.obj(
       "xml" -> grades.toString,
-      "signature" -> new scala.Predef.String(signature.map(_.toChar))
+      "signature" -> Crypto.getStringFromBytes(signature)
     )
 
     val responsePromise = WS.url(URL).post(postData)

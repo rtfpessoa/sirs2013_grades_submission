@@ -53,7 +53,7 @@ object Crypto {
     string.toCharArray.map(_.toByte)
   }
 
-  def getStringFromBytes(string: String): Array[Byte] = {
-    string.toCharArray.map(_.toByte)
+  def getStringFromBytes(bytes: Array[Byte]): String = {
+    new String(bytes.map(_.toChar))
   }
 }

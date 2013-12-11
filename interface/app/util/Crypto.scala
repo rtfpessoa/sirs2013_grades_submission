@@ -13,7 +13,7 @@ object Crypto {
   }
 
   def decodePrivateKey(encodedKey: String): PrivateKey = {
-    val keyBytes = encodedKey.toCharArray.map(_.toByte)
+    val keyBytes = Crypto.getBytesFromString(encodedKey)
     val spec = new PKCS8EncodedKeySpec(keyBytes)
     val factory = KeyFactory.getInstance("RSA")
     factory.generatePrivate(spec)
@@ -31,10 +31,17 @@ object Crypto {
     val publicKeyBytes = publicKey.getEncoded
     val privateKeyBytes = privateKey.getEncoded
 
-    val publicKeyString = new scala.Predef.String(publicKeyBytes.map(_.toChar))
-    val privateKeyString = new scala.Predef.String(privateKeyBytes.map(_.toChar))
+    val publicKeyString = Crypto.getStringFromBytes(publicKeyBytes)
+    val privateKeyString = Crypto.getStringFromBytes(privateKeyBytes)
 
     (publicKeyString, privateKeyString)
   }
 
+  def getBytesFromString(string: String): Array[Byte] = {
+    string.toCharArray.map(_.toByte)
+  }
+
+  def getStringFromBytes(bytes: Array[Byte]): String = {
+    new String(bytes.map(_.toChar))
+  }
 }
