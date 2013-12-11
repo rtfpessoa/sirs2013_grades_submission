@@ -9,17 +9,34 @@ import scala.concurrent.duration.Duration
 import rules.StorageRules.StorageRules
 import play.api.data._
 import play.api.data.Forms._
+import java.io.FileInputStream
 
 object StorageController extends Controller {
 
-  case class GradesViewModel(student: String, grade: Long)
+  case class StudentViewModel(username: String, name: String, grade: Long)
 
   def index = Action {
     implicit request =>
       courseForm.bindFromRequest.fold(
         formWithErrors => BadRequest(controllers.routes.Application.index().url),
         courseId => {
-          Ok(views.html.grades(""))
+          val file = StorageRules.getGradesFile(courseId)
+          val fis = new FileInputStream(file)
+          val xmlBytes = new Array[Byte](file.length().toInt)
+          fis.read(xmlBytes)
+          fis.close()
+
+          val xml = scala.xml.XML.loadString(Crypto.getStringFromBytes(xmlBytes))
+
+          val teacherUsername = (xml \ "teacher" \ "@username").toString()
+          val grades = (xml \\ "student").map {
+            student =>
+              val studentName = (student \ "@name").toString()
+              val studentUsername = (student \ "@username").toString()
+              val studentGrade = (student \ "@grade").toString().toInt
+              StudentViewModel(studentUsername, studentName, studentGrade)
+          }
+          Ok(views.html.grades(teacherUsername, grades))
         }
       )
   }

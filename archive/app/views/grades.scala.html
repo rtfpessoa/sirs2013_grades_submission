@@ -1,4 +1,4 @@
-@(content: String)
+@(content: String, students: Seq[controllers.storage.StorageController.StudentViewModel])
 
 <!DOCTYPE html>
 
@@ -13,7 +13,6 @@
     <body>
         <div class="panel panel-default">
             <div class="panel-heading">Grades</div>
-
                 <!-- Table -->
             <table class="table">
                 <thead>
@@ -24,21 +23,13 @@
                     </tr>
                 </thead>
                 <tbody>
+                @for(student <- students) {
                     <tr>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>1</td>
+                        <td>@student.username</td>
+                        <td>@student.name</td>
+                        <td>@student.grade</td>
                     </tr>
-                    <tr>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>2</td>
-                    </tr>
-                    <tr>
-                        <td>Larry</td>
-                        <td>the Bird</td>
-                        <td>3</td>
-                    </tr>
+                }
                 </tbody>
             </table>
         </div>
