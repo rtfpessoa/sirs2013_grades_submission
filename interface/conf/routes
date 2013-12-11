@@ -3,14 +3,14 @@
 # ~~~~
 
 # Home page
-GET         /                    controllers.Application.index
-POST        /select              controllers.Application.selectCourse
-POST        /submit              controllers.Application.submitGrades
-GET        /security/key/:username        controllers.Application.supplyKey(username: String)
+GET         /                              controllers.Application.index
+POST        /select                        controllers.Application.selectCourse
+POST        /submit                        controllers.Application.submitGrades
+GET         /security/key/:username        controllers.Application.supplyKey(username: String)
 
-GET         /login               controllers.Auth.login
-POST        /login               controllers.Auth.authenticate
-GET         /logout              controllers.Auth.logout
+GET         /login                         controllers.Auth.login
+POST        /login                         controllers.Auth.authenticate
+GET         /logout                        controllers.Auth.logout
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file        controllers.Assets.at(path="/public", file)
+GET         /assets/*file                  controllers.Assets.at(path="/public", file)
