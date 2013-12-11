@@ -7,9 +7,9 @@ CREATE TABLE public."Teacher"
   "username"   TEXT               NOT NULL,
   UNIQUE ("username"),
   "password"   TEXT               NOT NULL,
-  "privateKey" TEXT               NOT NULL,
+  "privateKey" TEXT               ,
   UNIQUE ("privateKey"),
-  "publicKey"  TEXT               NOT NULL,
+  "publicKey"  TEXT               ,
   UNIQUE ("publicKey")
 );
 
@@ -20,9 +20,9 @@ ADD CONSTRAINT "unique_privateKey" UNIQUE ("privateKey");
 ALTER TABLE public."Teacher"
 ADD CONSTRAINT "unique_publicKey" UNIQUE ("publicKey");
 
-INSERT INTO public."Teacher" VALUES (1, 'Rafael', 'ist169801', '5f4dcc3b5aa765d61d8327deb882cf99', '1fc26f265b15a6c0aeaa9f0bf5654c6b', '3bead7e3939d0311277c2f01cd8a52f9');
-INSERT INTO public."Teacher" VALUES (2, 'Rodrigo', 'ist169637', '5f4dcc3b5aa765d61d8327deb882cf99', 'bcb6a39243c178b939d0e54483bd357e', '2ff1b08fa0001a1df3f9a64ebfceb4ac');
-INSERT INTO public."Teacher" VALUES (3, 'Paulo', 'ist169298', '5f4dcc3b5aa765d61d8327deb882cf99', '341ff81c0dab0f16c73e7db8e2a686e7', '95e6dd98e2c23ee1762d4e0700b5b27e');
+INSERT INTO public."Teacher" VALUES (1, 'Rafael', 'ist169801', '5f4dcc3b5aa765d61d8327deb882cf99', NULL , NULL);
+INSERT INTO public."Teacher" VALUES (2, 'Rodrigo', 'ist169637', '5f4dcc3b5aa765d61d8327deb882cf99', NULL , NULL);
+INSERT INTO public."Teacher" VALUES (3, 'Paulo', 'ist169298', '5f4dcc3b5aa765d61d8327deb882cf99', NULL , NULL);
 
 CREATE TABLE public."Student"
 (

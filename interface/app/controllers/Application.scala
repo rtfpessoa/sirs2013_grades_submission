@@ -32,7 +32,7 @@ object Application extends Controller with Secured {
         classId => {
           // TODO: Get grades from Archive
 
-          Ok(views.html.grades(Seq()))
+          Ok(views.html.grades(""))
         }
       )
   }

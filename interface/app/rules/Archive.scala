@@ -7,33 +7,20 @@ import model.TeacherTable
 import model.traits.SecureStringFactory
 
 case class StudentGrade(username: String, name: String, grade: Long) {
-  def toXML =
-    <studentGrade>
-      <username>
-        {username}
-      </username>
-      <name>
-        {name}
-      </name>
-      <grade>
-        {grade}
-      </grade>
-    </studentGrade>
+  override def toString =
+    s"""<student name="$username" grade="$grade" />"""
 }
 
 case class ClassGrades(className: String, teacherUsername: String, grades: Seq[StudentGrade]) {
-  def toXML =
-    <classGrades>
-      <className>
-        {className}
-      </className>
-      <teacherUsername>
-        {teacherUsername}
-      </teacherUsername>
-      <grades>
-        {grades.map(_.toXML)}
-      </grades>
-    </classGrades>
+  override def toString =
+    s"""<xml>
+      |  <class name="$className" />
+      |  <teacher username="$teacherUsername" />
+      |  <grades>
+      |    ${grades.mkString}
+      |  </grades>
+      |</xml>
+    """.stripMargin
 }
 
 object Archive {
@@ -42,12 +29,12 @@ object Archive {
 
   def sendGrades(grades: ClassGrades) = {
     val teacherPrivateKey = TeacherTable.getByUsername(grades.teacherUsername).get.privateKey
-
-    val signature = Crypto.sign(Crypto.decodePrivateKey(SecureStringFactory.fromSecureString(teacherPrivateKey).getBytes), grades.toXML.toString().getBytes)
+    val keyBytes = SecureStringFactory.fromSecureString(teacherPrivateKey.get).getBytes
+    val signature = Crypto.sign(Crypto.decodePrivateKey(keyBytes), grades.toString().getBytes)
 
     val postData = Json.obj(
-      //"xml" -> grades.toXML,
-      "signature" -> "value2"
+      "xml" -> grades.toString,
+      "signature" -> new String(signature)
     )
 
     WS.url(URL).post(postData)
