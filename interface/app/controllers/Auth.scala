@@ -1,7 +1,7 @@
 package controllers
 
 import play.api.mvc.{Security, Action, Controller}
-import model.TeacherTable
+import model.{UserSecretsTable, UserTable}
 import util.MD5
 import play.api.data._
 import play.api.data.Forms._
@@ -29,10 +29,11 @@ object Auth extends Controller {
   )
 
   private def check(username: String, password: String): Boolean = {
-    val user = TeacherTable.getByUsername(username)
+    val user = UserTable.getByUsername(username)
 
     if (user.isDefined) {
-      user.get.password == MD5.hash(password)
+      val secrets = UserSecretsTable.getByUserId(user.get.id).get
+      secrets.password == MD5.hash(password)
     }
     else {
       false

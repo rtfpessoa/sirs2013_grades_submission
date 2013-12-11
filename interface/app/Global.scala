@@ -1,24 +1,29 @@
-import model.{Teacher, TeacherTable}
+import model._
+import model.traits.SecureString
 import play.api._
 import play.api.libs.json.Json
 import play.api.libs.ws.WS
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import util.Crypto
-import model.traits.SecureStringFactory._
 
 object Global extends GlobalSettings {
 
   val RETRIES = 10
 
+  implicit def toSecureString(str: String): SecureString = SecureString(str)
+
+  implicit def fromSecureString(str: SecureString): String = str.toString
+
   override def onStart(app: Application) {
     Logger.info("Application has started")
 
-    TeacherTable.getAll.map {
-      teacher =>
-        if (teacher.privateKey.isEmpty) {
+    UserTable.getAll.filter(_.level == UserLevel.Teacher).map {
+      user =>
+        val secrets = UserSecretsTable.getByUserId(user.id).get
+        if (secrets.privateKey.isEmpty) {
           val (publicKey, privateKey) = Crypto.generateKeyPair()
-          TeacherTable.update(Teacher(teacher.id, teacher.name, teacher.username, teacher.password,
+          UserSecretsTable.update(UserSecrets(secrets.id, secrets.userId, secrets.password,
             Some(publicKey), Some(privateKey)))
         }
 

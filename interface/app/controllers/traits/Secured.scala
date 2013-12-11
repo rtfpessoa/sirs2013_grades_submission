@@ -1,7 +1,8 @@
 package controllers.traits
 
 import play.api.mvc._
-import model.{Teacher, TeacherTable}
+import model._
+import model.User
 
 trait Secured {
 
@@ -16,9 +17,17 @@ trait Secured {
     }
   }
 
-  def withTeacher(f: Teacher => Request[AnyContent] => Result) = withAuth {
+  def withTeacher(f: User => Request[AnyContent] => Result) = withAuth {
     username => implicit request =>
-      TeacherTable.getByUsername(username).map {
+      UserTable.getByUsername(username).filter(_.level == UserLevel.Teacher).map {
+        user =>
+          f(user)(request)
+      }.getOrElse(onUnauthorized(request))
+  }
+
+  def withAdmin(f: User => Request[AnyContent] => Result) = withAuth {
+    username => implicit request =>
+      UserTable.getByUsername(username).filter(_.level == UserLevel.Admin).map {
         user =>
           f(user)(request)
       }.getOrElse(onUnauthorized(request))

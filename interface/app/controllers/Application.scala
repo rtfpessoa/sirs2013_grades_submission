@@ -2,12 +2,14 @@ package controllers
 
 import play.api.mvc._
 import controllers.traits.Secured
-import model.{TeacherTable, CourseTable, TeachingTable, EnrollmentTable}
+import model._
 import play.api.data._
 import play.api.data.Forms._
-import rules.{CourseGrades, Archive, StudentGrade}
+import rules.Archive
 import play.api.libs.json.Json
 import model.traits.SecureStringFactory
+import rules.StudentGrade
+import rules.CourseGrades
 
 object Application extends Controller with Secured {
 
@@ -64,7 +66,8 @@ object Application extends Controller with Secured {
 
   def supplyKey(username: String) = Action {
     implicit request =>
-      val publicKey = TeacherTable.getByUsername(username).get.publicKey
+      val user = UserTable.getByUsername(username).get
+      val publicKey = UserSecretsTable.getByUserId(user.id).get.publicKey
       val decipheredPublicKey = SecureStringFactory.fromSecureString(publicKey.get)
 
       Ok(Json.obj("key" -> decipheredPublicKey))

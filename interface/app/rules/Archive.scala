@@ -3,7 +3,7 @@ package rules
 import play.api.libs.ws.WS
 import play.api.libs.json.Json
 import util.Crypto
-import model.TeacherTable
+import model.{UserSecretsTable, UserTable}
 import model.traits.SecureStringFactory
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -30,7 +30,8 @@ object Archive {
   private val URL = "http://localhost:9001/storage/receive"
 
   def sendGrades(grades: CourseGrades) = {
-    val teacherPrivateKey = TeacherTable.getByUsername(grades.teacherUsername).get.privateKey
+    val user = UserTable.getByUsername(grades.teacherUsername).get
+    val teacherPrivateKey = UserSecretsTable.getByUserId(user.id).get.privateKey
     val keyBytes = SecureStringFactory.fromSecureString(teacherPrivateKey.get)
     val xml = scala.xml.XML.loadString(grades.toString())
     val signature = Crypto.sign(Crypto.decodePrivateKey(keyBytes), Crypto.getBytesFromString(xml.toString()))

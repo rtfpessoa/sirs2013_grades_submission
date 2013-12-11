@@ -13,7 +13,7 @@ object CourseFactory {
   }
 }
 
-object CourseTable extends Table[Course]("Class") with BaseTable[Course] {
+object CourseTable extends Table[Course]("Course") with BaseTable[Course] {
 
   def name = column[String]("name")
 
