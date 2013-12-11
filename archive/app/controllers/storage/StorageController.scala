@@ -12,7 +12,7 @@ import scala.concurrent.duration.Duration
 
 object StorageController extends Controller {
 
-  private val currentDir = new File(".").getAbsolutePath
+  private val currentDir = new File("").getAbsolutePath
 
   def index(clazz: String, teacher: String) = Action {
     val folder = new File(".")
@@ -32,15 +32,15 @@ object StorageController extends Controller {
           val xml = scala.xml.XML.loadString(xmlString)
           val signature = signatureString.toCharArray.map(_.toByte)
 
-          val teacher = (xml \ "teacher" \ "@name").toString()
-          val clazz = (xml \ "class" \ "@name").toString()
+          val teacher = (xml \ "teacher" \ "@username").toString()
+          val course = (xml \ "course" \ "@name").toString()
 
           if (checkSignature(teacher, signature, xml.toString().getBytes)) {
-            val gradesWriter = new PrintWriter(getSignatureFile(clazz, teacher))
+            val gradesWriter = new PrintWriter(getSignatureFile(course, teacher))
             gradesWriter.write(xml.toString())
             gradesWriter.close()
 
-            val signatureWriter = new PrintWriter(getGradesFile(clazz, teacher))
+            val signatureWriter = new PrintWriter(getGradesFile(course, teacher))
             signatureWriter.write(signatureString)
             signatureWriter.close()
 
@@ -55,7 +55,7 @@ object StorageController extends Controller {
   }
 
   def getTeacherKey(teacher: String) = {
-    if (Crypto.hasKey(teacher)) {
+    if (!Crypto.hasKey(teacher)) {
       val responsePromise = WS.url("http://localhost:9000/security/key/" + teacher).get()
       val json = Await.result(responsePromise, Duration(5, "seconds")).json
       val keyOption = (json \ "key").asOpt[String]

@@ -14,7 +14,7 @@ object Crypto {
     verifier.verify(signature)
   }
 
-  private val currentDir = new File(".").getAbsolutePath
+  private val currentDir = new File("").getAbsolutePath
   private val keyFactory = KeyFactory.getInstance("RSA")
   private val keysDir = new File(currentDir + "/" + Play.configuration.getString("keys.dir").get)
 
