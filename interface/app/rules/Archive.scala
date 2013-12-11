@@ -16,7 +16,7 @@ case class StudentGrade(username: String, grade: Int) {
 case class ClassGrades(className: String, teacherUsername: String, grades: Seq[StudentGrade]) {
   override def toString =
     s"""<xml>
-      |  <class name="$className" />
+      |  <course name="$className" />
       |  <teacher username="$teacherUsername" />
       |  <grades>
       |    ${grades.mkString}
