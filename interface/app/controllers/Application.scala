@@ -33,8 +33,8 @@ object Application extends Controller with Secured {
 
   val gradesForm = Form(
     mapping(
-      "teacher" -> text,
       "course" -> text,
+      "teacher" -> text,
       "grades" -> seq(
         mapping(
           "username" -> text,
