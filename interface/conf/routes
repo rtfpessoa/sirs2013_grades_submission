@@ -6,7 +6,7 @@
 GET         /                    controllers.Application.index
 POST        /grades              controllers.Application.grades
 GET         /teacher             controllers.Application.teacher
-POST        /teacher/select      controllers.Application.selectCurse
+POST        /teacher/select      controllers.Application.selectCourse
 POST        /teacher/submit      controllers.Application.submitGrades
 
 GET         /login               controllers.Auth.login

@@ -3,24 +3,24 @@ package model
 import scala.slick.driver.PostgresDriver.simple._
 import model.traits.BaseTable
 
-case class Clazz(id: Long, name: String, department: String)
+case class Course(id: Long, name: String, department: String)
 
-object ClassFactory {
-  val apply = Clazz.apply(-1, _: String, _: String)
+object CourseFactory {
+  val apply = Course.apply(-1, _: String, _: String)
 
-  def unapply(c: Clazz) = {
+  def unapply(c: Course) = {
     Some((c.name, c.department))
   }
 }
 
-object ClassTable extends Table[Clazz]("Class") with BaseTable[Clazz] {
+object CourseTable extends Table[Course]("Class") with BaseTable[Course] {
 
   def name = column[String]("name")
 
   def department = column[String]("department")
 
-  def * = id ~ name ~ department <>(Clazz, Clazz.unapply _)
+  def * = id ~ name ~ department <>(Course, Course.unapply _)
 
-  def auto = name ~ department <>(ClassFactory.apply, ClassFactory.unapply _)
+  def auto = name ~ department <>(CourseFactory.apply, CourseFactory.unapply _)
 
 }

@@ -2,7 +2,7 @@ package controllers
 
 import play.api.mvc._
 import controllers.traits.Secured
-import model.{ClassTable, Student, TeachingTable, EnrollmentTable}
+import model.{CourseTable, Student, TeachingTable, EnrollmentTable}
 import play.api.data._
 import play.api.data.Forms._
 import rules.ClassGrades
@@ -12,7 +12,7 @@ import play.api.libs.json.Json
 object Application extends Controller with Secured {
 
   def index = Action {
-    val classes = ClassTable.getAll
+    val classes = CourseTable.getAll
     Ok(views.html.index(classes))
   }
 
@@ -21,11 +21,6 @@ object Application extends Controller with Secured {
   private val classForm = Form(
     single(
       "classId" -> number
-    ))
-
-  private val gradesForm2 = (
-    single(
-      "grade" -> number
     ))
 
   def grades = Action {
@@ -45,12 +40,12 @@ object Application extends Controller with Secured {
       Ok(views.html.teacher(teacher, TeachingTable.getClassesOfTeacher(teacher.id)))
   }
 
-  def selectCurse = withTeacher {
+  def selectCourse = withTeacher {
     teacher => implicit request =>
       classForm.bindFromRequest.fold(
         formWithErrors => BadRequest(controllers.routes.Application.teacher().url),
         classId => {
-          Ok(views.html.assigngrades(teacher, ClassTable.getById(classId).get, EnrollmentTable.getStudentsOfClass(classId)))
+          Ok(views.html.assigngrades(teacher, CourseTable.getById(classId).get, EnrollmentTable.getStudentsOfClass(classId)))
         }
       )
   }

@@ -23,13 +23,13 @@ object TeachingTable extends Table[Teaching]("Teaching") with BaseTable[Teaching
 
   def auto = teacherId ~ classId <>(TeachingFactory.apply, TeachingFactory.unapply _)
 
-  def getClassesOfTeacher(teacherId: Long): Seq[Clazz] = {
+  def getClassesOfTeacher(teacherId: Long): Seq[Course] = {
     BasicDB.withConnection {
       connection =>
         implicit session: Session =>
           (for (teaching <- this if teaching.teacherId === teacherId) yield teaching.classId).list
     }.map {
-    	classId => ClassTable.getById(classId)
+    	classId => CourseTable.getById(classId)
     }.flatten
   }
 
