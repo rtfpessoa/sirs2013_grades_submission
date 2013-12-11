@@ -6,6 +6,9 @@ import play.api.libs.json.Json
 import controllers.crypto.Crypto
 import play.api.Play
 import play.api.Play.current
+import play.api.libs.ws.WS
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 
 object StorageController extends Controller {
 
@@ -52,13 +55,17 @@ object StorageController extends Controller {
   }
 
   def getTeacherKey(teacher: String) = {
+    if (Crypto.hasKey(teacher)) {
+      val responsePromise = WS.url("http://localhost:9000/security/key/" + teacher).get()
+      val json = Await.result(responsePromise, Duration(5, "seconds")).json
+      val keyOption = (json \ "key").asOpt[String]
+
+      if (keyOption.isDefined) {
+        Crypto.saveKey(teacher, keyOption.get)
+      }
+    }
+
     Crypto.loadKey(teacher)
-    /*if (Crypto.hasKey(teacher)) {
-      Crypto.loadKey(teacher)
-    } else {
-      val key = WS.url("http://localhost:9000/security/key/" + teacher).get()
-      Crypto.saveKey(teacher, key)
-    }*/
   }
 
   def checkSignature(teacher: String, xml: Array[Byte], signature: Array[Byte]) = {
