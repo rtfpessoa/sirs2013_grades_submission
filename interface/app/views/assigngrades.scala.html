@@ -39,10 +39,13 @@
                         </div>
                     </div>
                     <input name="grades[@i].username" type="hidden" value="@students(i).username">
+                    <input name="grades[@i].name" type="hidden" value="@students(i).name">
                 }
-            <input name="course" type="hidden" value="@course.name">
-            <input name="teacher" type="hidden" value="@teacher.username">
-            <button id="submit-grades" class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+                <input name="courseId" type="hidden" value="@course.id">
+                <input name="courseName" type="hidden" value="@course.name">
+                <input name="teacherName" type="hidden" value="@teacher.name">
+                <input name="teacherUsername" type="hidden" value="@teacher.username">
+                <button id="submit-grades" class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
             </form>
         </div>
     </body>

@@ -8,16 +8,16 @@ import model.traits.SecureStringFactory
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
-case class StudentGrade(username: String, grade: Int) {
+case class StudentGrade(name:String, username: String, grade: Int) {
   override def toString =
-    s"""<student name="$username" grade="$grade" />"""
+    s"""<student name="$name" username="$username" grade="$grade" />"""
 }
 
-case class ClassGrades(className: String, teacherUsername: String, grades: Seq[StudentGrade]) {
+case class CourseGrades(courseId: Long, courseName: String, teacherName: String, teacherUsername: String, grades: Seq[StudentGrade]) {
   override def toString =
     s"""<xml>
-      |  <course name="$className" />
-      |  <teacher username="$teacherUsername" />
+      |  <course id="$courseId" name="$courseName" />
+      |  <teacher name="$teacherName" username="$teacherUsername" />
       |  <grades>
       |    ${grades.mkString}
       |  </grades>
@@ -29,7 +29,7 @@ object Archive {
 
   private val URL = "http://localhost:9001/storage/receive"
 
-  def sendGrades(grades: ClassGrades) = {
+  def sendGrades(grades: CourseGrades) = {
     val teacherPrivateKey = TeacherTable.getByUsername(grades.teacherUsername).get.privateKey
     val keyBytes = SecureStringFactory.fromSecureString(teacherPrivateKey.get)
     val xml = scala.xml.XML.loadString(grades.toString())

@@ -5,7 +5,7 @@ import controllers.traits.Secured
 import model.{TeacherTable, CourseTable, TeachingTable, EnrollmentTable}
 import play.api.data._
 import play.api.data.Forms._
-import rules.{Archive, ClassGrades, StudentGrade}
+import rules.{CourseGrades, Archive, StudentGrade}
 import play.api.libs.json.Json
 import model.traits.SecureStringFactory
 
@@ -33,15 +33,18 @@ object Application extends Controller with Secured {
 
   val gradesForm = Form(
     mapping(
-      "course" -> text,
-      "teacher" -> text,
+      "courseId" -> longNumber,
+      "courseName" -> text,
+      "teacherName" -> text,
+      "teacherUsername" -> text,
       "grades" -> seq(
         mapping(
+          "name" -> text,
           "username" -> text,
           "grade" -> number
         )(StudentGrade.apply)(StudentGrade.unapply)
       )
-    )(ClassGrades.apply)(ClassGrades.unapply)
+    )(CourseGrades.apply)(CourseGrades.unapply)
   )
 
   def submitGrades = Action {
@@ -50,7 +53,7 @@ object Application extends Controller with Secured {
       formWithErrors => {
         Ok(Json.obj("error" -> formWithErrors.errorsAsJson))
       }, {
-        case classGrades: ClassGrades => {
+        case classGrades: CourseGrades => {
 
           val response = Archive.sendGrades(classGrades)
 
