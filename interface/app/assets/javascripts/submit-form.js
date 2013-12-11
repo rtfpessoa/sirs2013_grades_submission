@@ -8,19 +8,24 @@
         }
 
         var getGrades = function () {
+            var grades = $("#grades");
+
             var studentsPost = {};
-            studentsPost.teacher = "";
-            studentsPost.clazz = "";
+            studentsPost.teacher = grades.data("teacher");
+            studentsPost.clazz = grades.data("clazz");
             studentsPost.grades = [];
 
             var students = $(".student");
             $.each(students, function (i, e) {
                 var elem = $(e);
-                var name = elem.data("name");
-                var grade = elem.find("#" + name + "-grade").text();
-                studentsPost.grades.push({name: name, grade: grade});
+                var id = elem.data("id");
+                var username = elem.data("username");
+                var grade = elem.find("input").val();
+                studentsPost.grades[i] = {};
+                studentsPost.grades[i].username = username;
+                studentsPost.grades[i].grade = grade;
             });
-
+            debugger;
             return studentsPost;
         };
 

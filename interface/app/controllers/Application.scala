@@ -5,6 +5,9 @@ import controllers.traits.Secured
 import model.{ClassTable, Student, TeachingTable, EnrollmentTable}
 import play.api.data._
 import play.api.data.Forms._
+import rules.ClassGrades
+import rules.StudentGrade
+import play.api.libs.json.Json
 
 object Application extends Controller with Secured {
 
@@ -20,7 +23,7 @@ object Application extends Controller with Secured {
       "classId" -> number
     ))
 
-  private val gradesForm = (
+  private val gradesForm2 = (
     single(
       "grade" -> number
     ))
@@ -52,8 +55,34 @@ object Application extends Controller with Secured {
       )
   }
 
-  def submitGrades = Action {
-    Ok("Hello world")
-  }
+  val gradesForm = Form(
+    mapping(
+      "teacher" -> text,
+      "clazz" -> text,
+      "grades" -> seq(
+        mapping(
+          "username" -> text,
+          "grade" -> number
+        )(StudentGrade.apply)(StudentGrade.unapply)
+      )
+    )(ClassGrades.apply)(ClassGrades.unapply)
+  )
 
+  def submitGrades = Action {
+    implicit request =>
+      gradesForm.bindFromRequest().fold(
+      formWithErrors => {
+        Ok(Json.obj("error" -> formWithErrors.errorsAsJson))
+      }, {
+        case classGrades: ClassGrades => {
+
+          Ok(Json.obj("success" ->
+            s"""
+            |${classGrades.className}
+            |${classGrades.teacherUsername}
+            |${classGrades.grades.mkString(",")}
+          """.stripMargin))
+        }
+      })
+  }
 }

@@ -6,7 +6,7 @@ import util.Crypto
 import model.TeacherTable
 import model.traits.SecureStringFactory
 
-case class StudentGrade(username: String, name: String, grade: Long) {
+case class StudentGrade(username: String, grade: Int) {
   override def toString =
     s"""<student name="$username" grade="$grade" />"""
 }

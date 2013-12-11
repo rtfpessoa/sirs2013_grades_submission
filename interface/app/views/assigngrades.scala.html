@@ -17,10 +17,10 @@
         <div class="container">
             <div class="form-signin" >
                 <h2 class="form-signin-heading">Please insert the grades of the students</h2>
-                <table id="grades" data-url="@controllers.routes.Application.submitGrades">
+                <table id="grades" data-teacher="@teacher.username" data-clazz="@clazz.name" data-url="@controllers.routes.Application.submitGrades">
                 @for(st <- students) {
-                    <tr class="student" data-name="@st.name">
-                        <td> <p>@st.id -- @st.name</p> </td> <td> <input id="@{st.name}-grade" type="number" class="form-control" name="grade" required> </td>
+                    <tr class="student" data-id="@st.id" data-username="@st.username">
+                        <td> <p>@st.id -- @st.name</p> </td> <td> <input type="number" class="form-control" name="grade" required> </td>
                     </tr>
                 }
                 </table>
