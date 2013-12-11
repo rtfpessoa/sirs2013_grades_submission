@@ -9,21 +9,30 @@
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("bootstrap/js/bootstrap.min.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/utils.min.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/submit-form.min.js")" type="text/javascript"></script>
     </head>
     <body>
         <h1>Logged in: @teacher.name</h1>
         <div class="container">
-            <form class="form-signin" role="form" action="@routes.Application.submitGrades" method="post">
+            <div class="form-signin" >
                 <h2 class="form-signin-heading">Please insert the grades of the students</h2>
-                <table>
-                    @for(st <- students) {
-                        <tr>
-                            <td> <p>@st.id -- @st.name</p> </td> <td> <input type="number" class="form-control" name="grade" required> </td>
-                        </tr>
-                    }
+                <table id="grades" data-url="@controllers.routes.Application.submitGrades">
+                @for(st <- students) {
+                    <tr class="student" data-name="@st.name">
+                        <td> <p>@st.id -- @st.name</p> </td> <td> <input id="@{st.name}-grade" type="number" class="form-control" name="grade" required> </td>
+                    </tr>
+                }
                 </table>
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
-            </form>
+                <button id="submit-grades" class="btn btn-lg btn-primary btn-block">Submit</button>
+            </div>
         </div>
     </body>
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+        var submitForm = SubmitForm.getInstance();
+        submitForm.bindSubmitButton();
+    });
+    </script>
 </html>
