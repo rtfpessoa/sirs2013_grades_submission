@@ -1,4 +1,4 @@
-@(content: String, students: Seq[controllers.storage.StorageController.StudentViewModel])
+@(courseName: String, teacherName: String, students: Seq[controllers.storage.StorageController.StudentViewModel])
 
 <!DOCTYPE html>
 
@@ -11,6 +11,8 @@
         <script src="@routes.Assets.at("bootstrap/js/bootstrap.min.js")" type="text/javascript"></script>
     </head>
     <body>
+        <div class="panel panel-default">Course: @courseName</div>
+        <div class="panel panel-default">Teacher: @teacherName</div>
         <div class="panel panel-default">
             <div class="panel-heading">Grades</div>
                 <!-- Table -->

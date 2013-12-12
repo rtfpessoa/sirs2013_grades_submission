@@ -27,6 +27,8 @@ object StorageController extends Controller {
           val signatureFile = StorageRules.getSignatureFile(courseId)
           val signatureBytes = StorageRules.getDataFromFile(signatureFile)
 
+          val courseName = (gradesXml \ "course" \ "@name").toString()
+          val teacherName = (gradesXml \ "teacher" \ "@name").toString()
           val teacherUsername = (gradesXml \ "teacher" \ "@username").toString()
           if (checkSignature(teacherUsername, signatureBytes, gradesBytes)) {
             val grades = (gradesXml \\ "student").map {
@@ -36,7 +38,7 @@ object StorageController extends Controller {
                 val studentGrade = (student \ "@grade").toString().toInt
                 StudentViewModel(studentUsername, studentName, studentGrade)
             }
-            Ok(views.html.grades(teacherUsername, grades))
+            Ok(views.html.grades(courseName, teacherName, grades))
           }
           else {
             Ok(Json.obj("error" -> "The grades are currupted!"))
