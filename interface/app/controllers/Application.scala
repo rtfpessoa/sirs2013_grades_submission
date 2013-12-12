@@ -10,6 +10,7 @@ import play.api.libs.json.Json
 import model.traits.SecureStringFactory
 import rules.StudentGrade
 import rules.CourseGrades
+import util.Crypto
 
 object Application extends Controller with Secured {
 
@@ -73,7 +74,10 @@ object Application extends Controller with Secured {
       val publicKey = UserSecretsTable.getByUserId(user.id).get.publicKey
       val decipheredPublicKey = SecureStringFactory.fromSecureString(publicKey.get)
 
-      Ok(Json.obj("key" -> decipheredPublicKey))
+      val pubKeySignatureBytes = Crypto.sign(Crypto.loadKeyInterfacePvtKey(), Crypto.getBytesFromString(decipheredPublicKey))
+
+      Ok(Json.obj("key" -> decipheredPublicKey,
+        "signature" -> Crypto.getStringFromBytes(pubKeySignatureBytes)))
   }
 
 }

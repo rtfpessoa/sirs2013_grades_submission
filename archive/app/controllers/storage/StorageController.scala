@@ -99,10 +99,17 @@ object StorageController extends Controller {
     val responsePromise = WS.url("http://localhost:9000/security/key/" + teacher).get()
     val json = Await.result(responsePromise, Duration(5, "seconds")).json
     val keyOption = (json \ "key").asOpt[String]
+    val signatureOption = (json \ "signature").asOpt[String]
 
-    if (keyOption.isDefined) {
+    if (keyOption.isDefined && signatureOption.isDefined) {
       val keyBytes = Crypto.getBytesFromString(keyOption.get)
-      Some(Crypto.getPublicKeyFromBytes(keyBytes))
+      val signatureBytes = Crypto.getBytesFromString(signatureOption.get)
+
+      if (Crypto.verify(Crypto.loadKeyInterfacePubKey(), signatureBytes, keyBytes)) {
+        Some(Crypto.getPublicKeyFromBytes(keyBytes))
+      } else {
+        None
+      }
     } else {
       None
     }

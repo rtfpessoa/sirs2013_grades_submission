@@ -24,6 +24,15 @@ object Crypto {
     getStringFromBytes(cipheredData)
   }
 
+  def encryptKeyWithRSA(data: String): String = {
+    val cipher = Cipher.getInstance("RSA")
+    cipher.init(Cipher.ENCRYPT_MODE, loadKeyInterfacePvtKey())
+
+    val dataBytes = getBytesFromString(data)
+    val cipheredData = cipher.doFinal(dataBytes)
+    getStringFromBytes(cipheredData)
+  }
+
   def encryptAES(data: String): String = {
     PlayCrypto.encryptAES(data, a)
   }
