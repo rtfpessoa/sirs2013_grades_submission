@@ -6,6 +6,7 @@ import play.api.data.Forms._
 import controllers.traits.Secured
 import rules.UserRules.UserViewModel
 import rules.UserRules
+import model.{CourseFactory, CourseTable}
 
 object AdminController extends Controller with Secured {
 
@@ -24,6 +25,11 @@ object AdminController extends Controller with Secured {
 
   def addTeacher = withAdmin {
     admin => implicit request =>
+      Ok(views.html.admin.addTeacher(admin))
+  }
+
+  def addTeacherSubmit = withAdmin {
+    admin => implicit request =>
       addUserForm.bindFromRequest().fold(
       formWithErrors => {
         Ok(views.html.admin.addTeacher(admin))
@@ -37,6 +43,11 @@ object AdminController extends Controller with Secured {
 
   def addStudent = withAdmin {
     admin => implicit request =>
+      Ok(views.html.admin.addStudent(admin))
+  }
+
+  def addStudentSubmit = withAdmin {
+    admin => implicit request =>
       addUserForm.bindFromRequest().fold(
       formWithErrors => {
         Ok(views.html.admin.addStudent(admin))
@@ -48,12 +59,41 @@ object AdminController extends Controller with Secured {
       })
   }
 
-  def addCourse = TODO
+  case class CourseViewModel(name: String, department: String)
+
+  private val addCourseForm = Form(
+    mapping(
+      "name" -> text,
+      "department" -> text
+    )(CourseViewModel.apply)(CourseViewModel.unapply)
+  )
+
+  def addCourse = withAdmin {
+    admin => implicit request =>
+      Ok(views.html.admin.addCourse(admin))
+  }
+
+  def addCourseSubmit = withAdmin {
+    admin => implicit request =>
+      addCourseForm.bindFromRequest().fold(
+      formWithErrors => {
+        Ok(views.html.admin.addCourse(admin))
+      }, {
+        case course: CourseViewModel => {
+          //UserRules.createStudent(student)
+          CourseTable.create(CourseFactory.apply(course.name, course.department))
+          Ok(views.html.admin.index(admin))
+        }
+      })
+  }
 
   def assignTeacherToCourse = TODO
+  def assignTeacherToCourseSubmit = TODO
 
   def assignStudentToCourse = TODO
+  def assignStudentToCourseSubmit = TODO
 
   def changeUserLevel = TODO
+  def changeUserLevelSubmit = TODO
 
 }
