@@ -27,7 +27,8 @@ case class CourseGrades(courseId: Long, courseName: String, teacherName: String,
 
 object Archive {
 
-  private val URL = "http://localhost:9001/storage/receive"
+  private val URL_SUBMIT_GRADES = "http://localhost:9001/storage/receive"
+  private val URL_REQUEST_CHALLENGE = "http://localhost:9001/challenge"
 
   def sendGrades(grades: CourseGrades) = {
     val user = UserTable.getByUsername(grades.teacherUsername).get
@@ -36,7 +37,13 @@ object Archive {
     val xml = scala.xml.XML.loadString(grades.toString())
     val signature = Crypto.sign(Crypto.decodePrivateKey(keyBytes), Crypto.getBytesFromString(xml.toString()))
 
+    val challengePromise = WS.url(URL_REQUEST_CHALLENGE).get()
+    val requestBody = Await.result(challengePromise, Duration(5, "seconds")).body
+    val json = Json.parse(requestBody)
+    val challenge = (json \ "success").asOpt[String].get
+
     val postData = Json.obj(
+      "challenge" -> challenge,
       "xml" -> grades.toString,
       "signature" -> Crypto.getStringFromBytes(signature)
     )
@@ -45,7 +52,7 @@ object Archive {
       "payload" -> Crypto.encryptAES(postData.toString())
     )
 
-    val responsePromise = WS.url(URL).post(cipheredPostData)
+    val responsePromise = WS.url(URL_SUBMIT_GRADES).post(cipheredPostData)
     Await.result(responsePromise, Duration(5, "seconds")).body
   }
 

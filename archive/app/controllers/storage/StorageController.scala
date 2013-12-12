@@ -54,31 +54,40 @@ object StorageController extends Controller {
       val decipheredRequest = Crypto.decryptAES((data \ "payload").as[String])
 
       val json = Json.parse(decipheredRequest)
-      val xmlOption = (json \ "xml").asOpt[String]
-      val signatureOption = (json \ "signature").asOpt[String]
 
-      val action = (xmlOption, signatureOption) match {
-        case (Some(xmlString), Some(signatureString)) =>
-          val xml = scala.xml.XML.loadString(xmlString)
-          val signatureBytes = Crypto.getBytesFromString(signatureString)
+      val challengeOption = (json \ "challenge").asOpt[String]
 
-          val teacherUsername = (xml \ "teacher" \ "@username").toString()
-          val courseId = (xml \ "course" \ "@id").toString().toInt
+      if (challengeOption.isDefined &&
+        Crypto.removeChallenge(challengeOption.get).isDefined) {
 
-          val gradesBytes = Crypto.getBytesFromString(xml.toString())
-          if (checkSignature(teacherUsername, signatureBytes, gradesBytes)) {
-            StorageRules.saveGrades(courseId, signatureBytes, gradesBytes)
+        val xmlOption = (json \ "xml").asOpt[String]
+        val signatureOption = (json \ "signature").asOpt[String]
 
-            Some(Ok(Json.obj("success" -> "")))
-          }
-          else {
-            None
-          }
-        case _ =>
-          None
+        val action = (xmlOption, signatureOption) match {
+          case (Some(xmlString), Some(signatureString)) =>
+            val xml = scala.xml.XML.loadString(xmlString)
+            val signatureBytes = Crypto.getBytesFromString(signatureString)
+
+            val teacherUsername = (xml \ "teacher" \ "@username").toString()
+            val courseId = (xml \ "course" \ "@id").toString().toInt
+
+            val gradesBytes = Crypto.getBytesFromString(xml.toString())
+            if (checkSignature(teacherUsername, signatureBytes, gradesBytes)) {
+              StorageRules.saveGrades(courseId, signatureBytes, gradesBytes)
+
+              Some(Ok(Json.obj("success" -> "Grades submited with success!")))
+            }
+            else {
+              Some(Ok(Json.obj("error" -> "Signature verification failed!")))
+            }
+          case _ => None
+        }
+
+        action.getOrElse(Ok(Json.obj("error" -> "Missing parameters!")))
+
+      } else {
+        Ok(Json.obj("error" -> "Challenge verification failed!"))
       }
-
-      action.getOrElse(Ok(Json.obj("error" -> "")))
   }
 
   def getTeacherKey(teacher: String): Option[PublicKey] = {

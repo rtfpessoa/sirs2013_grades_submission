@@ -5,11 +5,21 @@ import java.security.spec.{PKCS8EncodedKeySpec, X509EncodedKeySpec}
 import java.io._
 import javax.crypto.Cipher
 import play.api.libs.{Crypto => PlayCrypto}
+import scala.collection.mutable
 
 object Crypto {
 
   private val currentDir = new File("").getAbsolutePath
   private var a = ""
+  private val challenges = mutable.Map[String, Boolean]()
+
+  def addChallenge(challenge: String) = {
+    challenges.put(challenge, true)
+  }
+
+  def removeChallenge(challenge: String) = {
+    challenges.remove(challenge)
+  }
 
   def update(data: String) = {
     a = data

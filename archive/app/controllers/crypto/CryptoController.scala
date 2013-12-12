@@ -25,4 +25,13 @@ object CryptoController extends Controller {
 
       action.getOrElse(Ok(Json.obj("error" -> "")))
   }
+
+  def challenge = Action {
+    request =>
+      val uuid = java.util.UUID.randomUUID.toString.filter(_ != '-')
+
+      Crypto.addChallenge(uuid)
+
+      Ok(Json.obj("success" -> uuid))
+  }
 }

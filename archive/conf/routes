@@ -14,3 +14,4 @@ POST        /storage/receive        controllers.storage.StorageController.receiv
 
 # Security
 POST        /updatekey              controllers.crypto.CryptoController.updatekey
+GET         /challenge              controllers.crypto.CryptoController.challenge
