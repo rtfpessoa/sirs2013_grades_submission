@@ -16,14 +16,13 @@
                 <li class="active">Admin (@admin.name)</li>
             </ol>
 
-            <form class="form-signin" role="form" action="@routes.Application.selectCourse" method="post">
-                <div class="col-md-4 col-md-offset-4">
-@admin
-                </div>
-                <div class="col-md-4">
-                    <button class="btn btn-primary" type="submit">Select</button>
-                </div>
-            </form>
+            <div class="list-group">
+                <a href="@controllers.admin.routes.AdminController.addTeacher" class="list-group-item">Add new Teacher</a>
+                <a href="#" class="list-group-item">Dapibus ac facilisis in</a>
+                <a href="#" class="list-group-item">Morbi leo risus</a>
+                <a href="#" class="list-group-item">Porta ac consectetur ac</a>
+                <a href="#" class="list-group-item">Vestibulum at eros</a>
+            </div>
         </div>
 
     </body>

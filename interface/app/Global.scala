@@ -18,7 +18,7 @@ object Global extends GlobalSettings {
   override def onStart(app: Application) {
     Logger.info("Application has started")
 
-    UserTable.getAll.filter(_.level == UserLevel.Teacher).map {
+    UserTable.getAll.filter(_.level != UserLevel.Student).map {
       user =>
         val secrets = UserSecretsTable.getByUserId(user.id).get
         if (secrets.privateKey.isEmpty) {
