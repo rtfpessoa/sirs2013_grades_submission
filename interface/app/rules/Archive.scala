@@ -41,7 +41,11 @@ object Archive {
       "signature" -> Crypto.getStringFromBytes(signature)
     )
 
-    val responsePromise = WS.url(URL).post(postData)
+    val cipheredPostData = Json.obj(
+      "payload" -> Crypto.encryptAES(postData.toString())
+    )
+
+    val responsePromise = WS.url(URL).post(cipheredPostData)
     Await.result(responsePromise, Duration(5, "seconds")).body
   }
 

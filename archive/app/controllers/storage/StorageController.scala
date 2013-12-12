@@ -49,8 +49,11 @@ object StorageController extends Controller {
 
   def receive = Action {
     request =>
-      val json = request.body.asJson.get
+      val data = request.body.asJson.get
 
+      val decipheredRequest = Crypto.decryptAES((data \ "payload").as[String])
+
+      val json = Json.parse(decipheredRequest)
       val xmlOption = (json \ "xml").asOpt[String]
       val signatureOption = (json \ "signature").asOpt[String]
 

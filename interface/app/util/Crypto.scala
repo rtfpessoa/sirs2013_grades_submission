@@ -3,7 +3,7 @@ package util
 import java.security._
 import java.security.spec.{X509EncodedKeySpec, PKCS8EncodedKeySpec}
 import java.io.{FileInputStream, File}
-import javax.crypto.{Cipher, KeyGenerator}
+import javax.crypto.Cipher
 import play.api.libs.{Crypto => PlayCrypto}
 
 object Crypto {
@@ -98,9 +98,8 @@ object Crypto {
   }
 
   def generateSymetricKey() = {
-    val kgen = KeyGenerator.getInstance("AES")
-    kgen.init(256)
-    a = getStringFromBytes(kgen.generateKey().getEncoded)
+    val key = java.util.UUID.randomUUID.toString.filter(_ != '-')
+    a = key
     a
   }
 }
