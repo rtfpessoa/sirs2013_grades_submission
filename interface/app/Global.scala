@@ -28,6 +28,7 @@ object Global extends GlobalSettings {
         }
 
     }
+    // Check rules.UserRules: it already has some methods!
     //    val (publicKey, privateKey) = Crypto.generateKeyPair()
     //    TeacherTable.create(TeacherFactory.apply("Rafael", "ist169801", MD5.hash("password"),
     //      Some(publicKey), Some(privateKey)))
