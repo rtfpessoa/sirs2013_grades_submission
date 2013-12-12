@@ -6,6 +6,7 @@ import play.api.libs.ws.WS
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import util.Crypto
+import rules.{UserRules, CourseRules}
 
 object Global extends GlobalSettings {
 
@@ -28,11 +29,8 @@ object Global extends GlobalSettings {
         }
 
     }
-    // Check rules.UserRules: it already has some methods!
-    //    val (publicKey, privateKey) = Crypto.generateKeyPair()
-    //    TeacherTable.create(TeacherFactory.apply("Rafael", "ist169801", MD5.hash("password"),
-    //      Some(publicKey), Some(privateKey)))
-
+    
+    PopulateData.populate
     exchangeComunicationKey()
   }
 
