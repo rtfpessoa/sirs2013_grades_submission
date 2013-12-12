@@ -4,12 +4,10 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import controllers.traits.Secured
-import model._
-import play.api.libs.json.Json
+import rules.UserRules.Teacher
+import rules.UserRules
 
 object AdminController extends Controller with Secured {
-
-  private case class Teacher(name: String, username: String, password: String)
 
   private val addTeacherForm = Form(
     mapping(
@@ -31,10 +29,7 @@ object AdminController extends Controller with Secured {
         Ok(views.html.admin.addTeacher(admin))
       }, {
         case teacher: Teacher => {
-          BasicDB.database.withTransaction {
-            val user = UserTable.create(UserFactory.apply(teacher.name, teacher.username, UserLevel.Teacher))
-            UserSecretsTable.create(UserSecretsFactory.apply(user.id, teacher.password, None, None))
-          }
+          UserRules.createTeacher(teacher)
           Ok(views.html.admin.index(admin))
         }
       })
