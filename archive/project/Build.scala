@@ -7,15 +7,14 @@ object ApplicationBuild extends Build {
   val appVersion = "1.0-SNAPSHOT"
 
   val appDependencies = Seq(
-    // Add your project dependencies here,
     jdbc,
-    anorm,
-    "commons-io" % "commons-io" % "2.0"
+    "commons-io" % "commons-io" % "2.0",
+    "play" %% "play" % "2.1.3" exclude("org.scala-lang", "scala-reflect"),
+    "com.typesafe.play" %% "play-slick" % "0.5.0.8",
+    "org.postgresql" % "postgresql" % "9.3-1100-jdbc4"
   )
 
 
-  val main = play.Project(appName, appVersion, appDependencies).settings(
-    // Add your own project settings here      
-  )
+  val main = play.Project(appName, appVersion, appDependencies)
 
 }
