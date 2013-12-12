@@ -18,12 +18,12 @@ object CryptoController extends Controller {
           val decipheredKey = Crypto.decryptRSA(stringKey)
           Crypto.update(decipheredKey)
 
-          Some(Ok(Json.obj("success" -> "")))
+          Some(Json.obj("success" -> ""))
         case _ =>
           None
       }
 
-      action.getOrElse(Ok(Json.obj("error" -> "")))
+      Ok(action.getOrElse(Json.obj("error" -> "")))
   }
 
   def challenge = Action {

@@ -43,22 +43,25 @@ object Global extends GlobalSettings {
       "key" -> cipheredKey
     )
 
-    for (i <- 0 to RETRIES) {
-      val responsePromise = WS.url(URL).post(postData)
+    import scala.util.control.Breaks._
+    breakable {
       try {
-        val response = Await.result(responsePromise, Duration(5, "seconds")).body
+        for (i <- 0 to RETRIES) {
+          val responsePromise = WS.url(URL).post(postData)
+          val response = Await.result(responsePromise, Duration(5, "seconds")).body
         val json = Json.parse(response)
 
         if ((json \ "success").asOpt[String].isDefined) {
           println("The communication key was exchanged with success!")
-          return
+          break
         }
-      } catch {
-        case t: Throwable => println("Key exchange failed!")
       }
-    }
+      } catch {
+        case t: Exception => println("Key exchange failed!")
+      }
 
     println("Ups: there was a problem establishing the communication key")
+    }
   }
 
   override def onStop(app: Application) {

@@ -8,9 +8,9 @@ object ApplicationBuild extends Build {
 
   val appDependencies = Seq(
     jdbc,
-    "play" %% "play" % "2.1.3" exclude("org.scala-lang", "scala-reflect"),
-    "com.typesafe.play" %% "play-slick" % "0.5.0.8",
-    "org.postgresql" % "postgresql" % "9.3-1100-jdbc4"
+    anorm,
+    "com.typesafe.play" %% "play-slick" % "0.4.0",
+    "org.postgresql" % "postgresql" % "9.2-1003-jdbc4"
   )
 
 
