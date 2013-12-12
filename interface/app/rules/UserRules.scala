@@ -31,4 +31,12 @@ object UserRules {
     }
   }
 
+  def getAllTeachers: Seq[User] = {
+    UserTable.getAll.filter(_.level == UserLevel.Teacher)
+  }
+
+  def getAllStudents: Seq[User] = {
+    UserTable.getAll.filter(_.level == UserLevel.Student)
+  }
+
 }

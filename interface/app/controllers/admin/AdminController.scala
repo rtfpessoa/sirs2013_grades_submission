@@ -6,8 +6,12 @@ import play.api.data.Forms._
 import controllers.traits.Secured
 import rules.UserRules.UserViewModel
 import rules.{CourseRules, UserRules}
-import model.{CourseFactory, CourseTable}
+import model._
+import rules.CourseRules.{EnrollmentViewModel, TeachingViewModel, CourseViewModel}
 import rules.CourseRules.CourseViewModel
+import rules.UserRules.UserViewModel
+import rules.CourseRules.EnrollmentViewModel
+import rules.CourseRules.TeachingViewModel
 
 object AdminController extends Controller with Secured {
 
@@ -86,13 +90,94 @@ object AdminController extends Controller with Secured {
       })
   }
 
-  def assignTeacherToCourse = TODO
-  def assignTeacherToCourseSubmit = TODO
+  private val assignTeacherToCourseForm = Form(
+    mapping(
+      "teacherId" -> longNumber,
+      "courseId" -> longNumber
+    )(TeachingViewModel.apply)(TeachingViewModel.unapply)
+  )
 
-  def assignStudentToCourse = TODO
-  def assignStudentToCourseSubmit = TODO
+  def assignTeacherToCourse = withAdmin {
+    admin => implicit request =>
+      val teachers = UserRules.getAllTeachers
+      val courses = CourseTable.getAll
+      Ok(views.html.admin.assignTeacherToCourse(admin, teachers, courses))
+  }
 
-  def changeUserLevel = TODO
-  def changeUserLevelSubmit = TODO
+  def assignTeacherToCourseSubmit = withAdmin {
+    admin => implicit request =>
+      assignTeacherToCourseForm.bindFromRequest().fold(
+      formWithErrors => {
+        val teachers = UserRules.getAllTeachers
+        val courses = CourseTable.getAll
+        Ok(views.html.admin.assignTeacherToCourse(admin, teachers, courses))
+      }, {
+        case teaching: TeachingViewModel => {
+          TeachingTable.create(TeachingFactory.apply(teaching.teacherId, teaching.courseId))
+          Ok(views.html.admin.index(admin))
+        }
+      })
+  }
+
+  private val assignStudentToCourseForm = Form(
+    mapping(
+      "studentId" -> longNumber,
+      "courseId" -> longNumber
+    )(EnrollmentViewModel.apply)(EnrollmentViewModel.unapply)
+  )
+
+  def assignStudentToCourse = withAdmin {
+    admin => implicit request =>
+      val students = UserRules.getAllStudents
+      val courses = CourseTable.getAll
+      Ok(views.html.admin.assignStudentToCourse(admin, students, courses))
+  }
+
+  def assignStudentToCourseSubmit = withAdmin {
+    admin => implicit request =>
+      assignStudentToCourseForm.bindFromRequest().fold(
+      formWithErrors => {
+        val students = UserRules.getAllStudents
+        val courses = CourseTable.getAll
+        Ok(views.html.admin.assignStudentToCourse(admin, students, courses))
+      }, {
+        case enrollment: EnrollmentViewModel => {
+          EnrollmentTable.create(EnrollmentFactory.apply(enrollment.studentId, enrollment.courseId))
+          Ok(views.html.admin.index(admin))
+        }
+      })
+  }
+
+  private case class UserLevelViewModel(userId: Long, level: String)
+
+  private val changeUserLevelForm = Form(
+    mapping(
+      "userId" -> longNumber,
+      "level" -> text
+    )(UserLevelViewModel.apply)(UserLevelViewModel.unapply)
+  )
+
+  def changeUserLevel = withAdmin {
+    admin => implicit request =>
+      val users = UserTable.getAll
+      val levels = Seq(UserLevel.Student, UserLevel.Teacher, UserLevel.Admin)
+      Ok(views.html.admin.changeUserLevel(admin, users, levels))
+  }
+
+  def changeUserLevelSubmit = withAdmin {
+    admin => implicit request =>
+      changeUserLevelForm.bindFromRequest().fold(
+      formWithErrors => {
+        val users = UserTable.getAll
+        val levels = Seq(UserLevel.Student, UserLevel.Teacher, UserLevel.Admin)
+        Ok(views.html.admin.changeUserLevel(admin, users, levels))
+      }, {
+        case userLevel: UserLevelViewModel => {
+          val user = UserTable.getById(userLevel.userId).get
+          UserTable.update(User(user.id, user.name, user.username, UserLevel.withName(userLevel.level)))
+          Ok(views.html.admin.index(admin))
+        }
+      })
+  }
 
 }

@@ -56,10 +56,13 @@ object Application extends Controller with Secured {
         Ok(Json.obj("error" -> formWithErrors.errorsAsJson))
       }, {
         case classGrades: CourseGrades => {
+          if (classGrades.grades.map(s => s.grade >= 0 && s.grade <= 20).fold(true)(_ && _)) {
+            val response = Archive.sendGrades(classGrades)
 
-          val response = Archive.sendGrades(classGrades)
-
-          Ok(Json.obj("success" -> response))
+            Ok(Json.obj("success" -> response))
+          } else {
+            Ok(Json.obj("error" -> "Invalid grades"))
+          }
         }
       })
   }

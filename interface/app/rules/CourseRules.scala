@@ -6,9 +6,9 @@ object CourseRules {
 
   case class CourseViewModel(abbrev: String, name: String, department: String)
 
-  case class TeachingViewModel(teacherId: Long, classId: Long)
+  case class TeachingViewModel(teacherId: Long, courseId: Long)
   
-  case class EnrollmentViewModel(studentId: Long, classId: Long)
+  case class EnrollmentViewModel(studentId: Long, courseId: Long)
 
   def createCourse(course: CourseViewModel) = {
     BasicDB.database.withTransaction {
@@ -18,13 +18,13 @@ object CourseRules {
 
   def assignTeacher(teaching: TeachingViewModel) = {
     BasicDB.database.withTransaction {
-      TeachingTable.create(TeachingFactory.apply(teaching.teacherId, teaching.classId))
+      TeachingTable.create(TeachingFactory.apply(teaching.teacherId, teaching.courseId))
     }
   }
   
   def enrollStudent(enrollment: EnrollmentViewModel) = {
     BasicDB.database.withTransaction {
-      EnrollmentTable.create(EnrollmentFactory.apply(enrollment.studentId, enrollment.classId))
+      EnrollmentTable.create(EnrollmentFactory.apply(enrollment.studentId, enrollment.courseId))
     }
   }
 
