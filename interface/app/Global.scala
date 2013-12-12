@@ -19,6 +19,9 @@ object Global extends GlobalSettings {
   override def onStart(app: Application) {
     Logger.info("Application has started")
 
+    PopulateData.populate()
+    exchangeComunicationKey()
+
     UserTable.getAll.filter(_.level != UserLevel.Student).map {
       user =>
         val secrets = UserSecretsTable.getByUserId(user.id).get
@@ -27,11 +30,8 @@ object Global extends GlobalSettings {
           UserSecretsTable.update(UserSecrets(secrets.id, secrets.userId, secrets.password,
             Some(publicKey), Some(privateKey)))
         }
-
     }
-    
-    PopulateData.populate
-    exchangeComunicationKey()
+
   }
 
   def exchangeComunicationKey(): Unit = {

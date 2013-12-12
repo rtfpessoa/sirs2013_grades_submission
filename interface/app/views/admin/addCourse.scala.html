@@ -19,6 +19,12 @@
 
             <form class="form-horizontal" role="form" action="@controllers.admin.routes.AdminController.addCourseSubmit" method="post">
                 <div class="form-group">
+                    <label class="col-sm-2 control-label">Abbreviature</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="abbrev" class="form-control" placeholder="Abbreviature">
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="col-sm-2 control-label">Name</label>
                     <div class="col-sm-10">
                         <input type="text" name="name" class="form-control" placeholder="Name">

@@ -5,8 +5,9 @@ import play.api.data._
 import play.api.data.Forms._
 import controllers.traits.Secured
 import rules.UserRules.UserViewModel
-import rules.UserRules
+import rules.{CourseRules, UserRules}
 import model.{CourseFactory, CourseTable}
+import rules.CourseRules.CourseViewModel
 
 object AdminController extends Controller with Secured {
 
@@ -59,10 +60,9 @@ object AdminController extends Controller with Secured {
       })
   }
 
-  case class CourseViewModel(name: String, department: String)
-
   private val addCourseForm = Form(
     mapping(
+      "abbrev" -> text,
       "name" -> text,
       "department" -> text
     )(CourseViewModel.apply)(CourseViewModel.unapply)
@@ -80,8 +80,7 @@ object AdminController extends Controller with Secured {
         Ok(views.html.admin.addCourse(admin))
       }, {
         case course: CourseViewModel => {
-          //UserRules.createStudent(student)
-          CourseTable.create(CourseFactory.apply(course.name, course.department))
+          CourseTable.create(CourseFactory.apply(course.abbrev, course.name, course.department))
           Ok(views.html.admin.index(admin))
         }
       })

@@ -7,7 +7,7 @@ import util.{MD5, Crypto}
 object UserRules {
 
   case class UserViewModel(name: String, username: String, password: String)
-  
+
   def createAdmin(admin: UserViewModel) = {
     BasicDB.database.withTransaction {
       val user = UserTable.create(UserFactory.apply(admin.name, admin.username, UserLevel.Admin))
