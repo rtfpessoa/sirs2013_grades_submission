@@ -3,28 +3,28 @@
 # ~~~~
 
 # Home page
-GET         /                              controllers.Application.index
-POST        /select                        controllers.Application.selectCourse
-POST        /submit                        controllers.Application.submitGrades
-GET         /security/key/:username        controllers.Application.supplyKey(username: String)
+GET         /                                          controllers.Application.index
+POST        /select                                    controllers.Application.selectCourse
+POST        /submit                                    controllers.Application.submitGrades
+GET         /security/key/:username                    controllers.Application.supplyKey(username: String)
 
-GET         /login                         controllers.Auth.login
-POST        /login                         controllers.Auth.authenticate
-GET         /logout                        controllers.Auth.logout
+GET         /login                                     controllers.Auth.login
+POST        /login                                     controllers.Auth.authenticate
+GET         /logout                                    controllers.Auth.logout
 
-GET         /admin                              controllers.admin.AdminController.index
-GET         /admin/addTeacher                   controllers.admin.AdminController.addTeacher
+GET         /admin                                     controllers.admin.AdminController.index
+GET         /admin/addTeacher                          controllers.admin.AdminController.addTeacher
 POST        /admin/addTeacher/submit                   controllers.admin.AdminController.addTeacherSubmit
-GET         /admin/addStudent                   controllers.admin.AdminController.addStudent
+GET         /admin/addStudent                          controllers.admin.AdminController.addStudent
 POST        /admin/addStudent/submit                   controllers.admin.AdminController.addStudentSubmit
-GET         /admin/addCourse                    controllers.admin.AdminController.addCourse
+GET         /admin/addCourse                           controllers.admin.AdminController.addCourse
 POST        /admin/addCourse/submit                    controllers.admin.AdminController.addCourseSubmit
-GET         /admin/assignTeacherToCourse        controllers.admin.AdminController.assignTeacherToCourse
+GET         /admin/assignTeacherToCourse               controllers.admin.AdminController.assignTeacherToCourse
 POST        /admin/assignTeacherToCourse/submit        controllers.admin.AdminController.assignTeacherToCourseSubmit
-GET         /admin/assignStudentToCourse        controllers.admin.AdminController.assignStudentToCourse
+GET         /admin/assignStudentToCourse               controllers.admin.AdminController.assignStudentToCourse
 POST        /admin/assignStudentToCourse/submit        controllers.admin.AdminController.assignStudentToCourseSubmit
-GET         /admin/changeUserLevel              controllers.admin.AdminController.changeUserLevel
+GET         /admin/changeUserLevel                     controllers.admin.AdminController.changeUserLevel
 POST        /admin/changeUserLevel/submit              controllers.admin.AdminController.changeUserLevelSubmit
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                  controllers.Assets.at(path="/public", file)
+GET         /assets/*file                              controllers.Assets.at(path="/public", file)

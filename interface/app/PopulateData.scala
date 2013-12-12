@@ -3,7 +3,7 @@ import rules.{ UserRules, CourseRules }
 
 object PopulateData {
 
-  def populate = {
+  def populate() = {
     if (UserTable.getByUsername("ist169801").isEmpty) {
       UserRules.createAdmin(UserRules.UserViewModel("Rafael Cortês", "ist169801", "password"))
       UserRules.createTeacher(UserRules.UserViewModel("Paulo Marques", "ist169298", "password"))
