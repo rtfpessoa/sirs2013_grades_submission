@@ -19,7 +19,7 @@ trait Secured {
 
   def withTeacher(f: User => Request[AnyContent] => Result) = withAuth {
     username => implicit request =>
-      UserTable.getByUsername(username).filter(_.level == UserLevel.Teacher).map {
+      UserTable.getByUsername(username).filter(_.level != UserLevel.Student).map {
         user =>
           f(user)(request)
       }.getOrElse(onUnauthorized(request))

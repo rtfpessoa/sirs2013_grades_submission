@@ -26,7 +26,7 @@ CREATE TABLE public."UserSecrets"
   UNIQUE ("publicKey")
 );
 
-INSERT INTO public."User" VALUES (5, 'Rafael', 'ist169801', 'Teacher');
+INSERT INTO public."User" VALUES (5, 'Rafael', 'ist169801', 'Admin');
 INSERT INTO public."UserSecrets" VALUES (1, 5, '5f4dcc3b5aa765d61d8327deb882cf99', NULL, NULL);
 INSERT INTO public."User" VALUES (6, 'Rodrigo', 'ist169637', 'Teacher');
 INSERT INTO public."UserSecrets" VALUES (2, 6, '5f4dcc3b5aa765d61d8327deb882cf99', NULL, NULL);
