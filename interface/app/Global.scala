@@ -6,11 +6,10 @@ import play.api.libs.ws.WS
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import util.Crypto
-import rules.{UserRules, CourseRules}
 
 object Global extends GlobalSettings {
 
-  val RETRIES = 10
+  val RETRIES = 5
 
   implicit def toSecureString(str: String): SecureString = SecureString(str)
 
@@ -46,12 +45,16 @@ object Global extends GlobalSettings {
 
     for (i <- 0 to RETRIES) {
       val responsePromise = WS.url(URL).post(postData)
-      val response = Await.result(responsePromise, Duration(5, "seconds")).body
-      val json = Json.parse(response)
+      try {
+        val response = Await.result(responsePromise, Duration(5, "seconds")).body
+        val json = Json.parse(response)
 
-      if ((json \ "success").asOpt[String].isDefined) {
-        println("The communication key was exchanged with success!")
-        return
+        if ((json \ "success").asOpt[String].isDefined) {
+          println("The communication key was exchanged with success!")
+          return
+        }
+      } catch {
+        case t: Throwable => println("Key exchange failed!")
       }
     }
 

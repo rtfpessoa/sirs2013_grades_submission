@@ -1,7 +1,7 @@
 package controllers
 
 import play.api.mvc._
-import rules.StorageRules.StorageRules
+import rules.storage.StorageRules
 
 object Application extends Controller {
 

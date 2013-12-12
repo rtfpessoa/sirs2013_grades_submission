@@ -5,10 +5,9 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WS
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-import rules.StorageRules.StorageRules
+import rules.storage.StorageRules
 import play.api.data._
 import play.api.data.Forms._
-import java.io.FileInputStream
 import rules.crypto.Crypto
 import java.security.PublicKey
 
@@ -21,23 +20,27 @@ object StorageController extends Controller {
       courseForm.bindFromRequest.fold(
         formWithErrors => BadRequest(controllers.routes.Application.index().url),
         courseId => {
-          val file = StorageRules.getGradesFile(courseId)
-          val fis = new FileInputStream(file)
-          val xmlBytes = new Array[Byte](file.length().toInt)
-          fis.read(xmlBytes)
-          fis.close()
+          val gradesFile = StorageRules.getGradesFile(courseId)
+          val gradesBytes = StorageRules.getDataFromFile(gradesFile)
+          val gradesXml = scala.xml.XML.loadString(Crypto.getStringFromBytes(gradesBytes))
 
-          val xml = scala.xml.XML.loadString(Crypto.getStringFromBytes(xmlBytes))
+          val signatureFile = StorageRules.getSignatureFile(courseId)
+          val signatureBytes = StorageRules.getDataFromFile(signatureFile)
 
-          val teacherUsername = (xml \ "teacher" \ "@username").toString()
-          val grades = (xml \\ "student").map {
-            student =>
-              val studentName = (student \ "@name").toString()
-              val studentUsername = (student \ "@username").toString()
-              val studentGrade = (student \ "@grade").toString().toInt
-              StudentViewModel(studentUsername, studentName, studentGrade)
+          val teacherUsername = (gradesXml \ "teacher" \ "@username").toString()
+          if (checkSignature(teacherUsername, signatureBytes, gradesBytes)) {
+            val grades = (gradesXml \\ "student").map {
+              student =>
+                val studentName = (student \ "@name").toString()
+                val studentUsername = (student \ "@username").toString()
+                val studentGrade = (student \ "@grade").toString().toInt
+                StudentViewModel(studentUsername, studentName, studentGrade)
+            }
+            Ok(views.html.grades(teacherUsername, grades))
           }
-          Ok(views.html.grades(teacherUsername, grades))
+          else {
+            Ok(Json.obj("error" -> "The grades are currupted!"))
+          }
         }
       )
   }

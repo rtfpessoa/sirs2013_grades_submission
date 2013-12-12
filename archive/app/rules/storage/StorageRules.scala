@@ -1,6 +1,6 @@
-package rules.StorageRules
+package rules.storage
 
-import java.io.{FileOutputStream, File}
+import java.io.{FileInputStream, FileOutputStream, File}
 import play.api.Play
 import play.api.Play.current
 
@@ -17,7 +17,7 @@ object StorageRules {
     new File(gradesDir.getAbsolutePath + "/" + course + "-grades-signature.txt")
   }
 
-  def saveGrades(courseId: Int, grades: Array[Byte], signature: Array[Byte]) = {
+  def saveGrades(courseId: Int, signature: Array[Byte], grades: Array[Byte]) = {
     if (!gradesDir.exists()) {
       gradesDir.mkdirs()
     }
@@ -26,8 +26,16 @@ object StorageRules {
     fosg.write(grades)
     fosg.close()
 
-    val foss = new FileOutputStream(getGradesFile(courseId))
+    val foss = new FileOutputStream(getSignatureFile(courseId))
     foss.write(signature)
     foss.close()
+  }
+
+  def getDataFromFile(file: java.io.File): Array[Byte] = {
+    val fis = new FileInputStream(file)
+    val xmlBytes = new Array[Byte](file.length().toInt)
+    fis.read(xmlBytes)
+    fis.close()
+    xmlBytes
   }
 }
