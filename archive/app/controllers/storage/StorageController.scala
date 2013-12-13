@@ -79,7 +79,7 @@ object StorageController extends Controller {
                 val signatureBytes = Crypto.getBytesFromString(signatureString)
 
                 val teacherUsername = (xml \ "teacher" \ "@username").toString()
-                val courseAbbrev = (xml \ "course" \ "@abbrev").toString().toString()
+                val courseAbbrev = (xml \ "course" \ "@abbrev").toString()
 
                 val gradesBytes = Crypto.getBytesFromString(xml.toString())
                 if (checkSignature(teacherUsername, signatureBytes, gradesBytes)) {
