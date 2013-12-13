@@ -29,7 +29,7 @@ case class CourseGrades(courseId: Long, courseName: String, courseAbbrev: String
 
 object Archive {
 
-  private val URL_SUBMIT_GRADES = Play.configuration.getString("archive.url").get + "/storage/receive"
+  private val URL_SUBMIT_GRADES = Play.configuration.getString("archive.url").get + "storage/receive"
   private val URL_REQUEST_CHALLENGE = Play.configuration.getString("archive.url").get + "challenge"
 
   def sendGrades(grades: CourseGrades) = {
