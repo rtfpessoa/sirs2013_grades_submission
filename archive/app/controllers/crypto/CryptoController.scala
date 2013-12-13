@@ -23,10 +23,10 @@ object CryptoController extends Controller {
 
             Json.obj("success" -> "The key was successfull updated!")
           } else {
-            Json.obj("success" -> "Signature did not match!")
+            Json.obj("error" -> "Signature did not match!")
           }
         case _ =>
-          Json.obj("success" -> "Missing parameters!")
+          Json.obj("error" -> "Missing parameters!")
       }
 
       Ok(action)
