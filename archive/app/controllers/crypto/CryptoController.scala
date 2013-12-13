@@ -18,15 +18,15 @@ object CryptoController extends Controller {
 
           if (Crypto.verify(Crypto.loadKeyInterfacePubKey(), Crypto.getBytesFromString(stringSignature),
             Crypto.getBytesFromString(stringKey))) {
+
             val decipheredKey = Crypto.decryptRSA(stringKey)
             Crypto.update(decipheredKey)
 
-            Json.obj("success" -> "The key was successfull updated!")
+            Json.obj("success" -> "The key was successfully updated!")
           } else {
             Json.obj("error" -> "Signature did not match!")
           }
-        case _ =>
-          Json.obj("error" -> "Missing parameters!")
+        case _ => Json.obj("error" -> "Missing parameters!")
       }
 
       Ok(action)

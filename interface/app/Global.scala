@@ -47,8 +47,8 @@ object Global extends GlobalSettings {
 
     import scala.util.control.Breaks._
     breakable {
-      try {
-        for (i <- 0 to RETRIES) {
+      for (i <- 0 to RETRIES) {
+        try {
           val responsePromise = WS.url(URL).post(postData)
           val response = Await.result(responsePromise, Duration(5, "seconds")).body
           val json = Json.parse(response)
@@ -56,13 +56,15 @@ object Global extends GlobalSettings {
           if ((json \ "success").asOpt[String].isDefined) {
             println("The communication key was exchanged with success!")
             break
+          } else {
+            println((json \ "error").as[String])
           }
+        } catch {
+          case t: Exception => println("Key exchange failed!")
         }
-      } catch {
-        case t: Exception => println("Key exchange failed!")
       }
 
-      println("Ups: there was a problem establishing the communication key")
+      println("Ups: there was a problem establishing the communication key!")
     }
   }
 

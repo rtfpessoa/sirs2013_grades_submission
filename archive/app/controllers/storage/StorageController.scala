@@ -30,6 +30,7 @@ object StorageController extends Controller {
           val courseName = (gradesXml \ "course" \ "@name").toString()
           val teacherName = (gradesXml \ "teacher" \ "@name").toString()
           val teacherUsername = (gradesXml \ "teacher" \ "@username").toString()
+
           if (checkSignature(teacherUsername, signatureBytes, gradesBytes)) {
             val grades = (gradesXml \\ "student").map {
               student =>
@@ -41,7 +42,7 @@ object StorageController extends Controller {
             Ok(views.html.grades(courseName, teacherName, grades))
           }
           else {
-            Ok(Json.obj("error" -> "The grades are currupted!"))
+            Ok(Json.obj("error" -> "The grades are corrupted!"))
           }
         }
       )
@@ -56,48 +57,50 @@ object StorageController extends Controller {
     request =>
       val data = request.body.asJson.get
 
-      val decipheredRequest = Crypto.decryptAES((data \ "payload").as[String])
+      val payload = (data \ "payload").asOpt[String]
+      payload.map {
+        data =>
+          val decipheredRequest = Crypto.decryptAES(data)
 
-      val json = Json.parse(decipheredRequest)
+          val json = Json.parse(decipheredRequest)
 
-      val challengeOption = (json \ "challenge").asOpt[String]
+          val challengeOption = (json \ "challenge").asOpt[String]
+          if (challengeOption.isDefined &&
+            Crypto.removeChallenge(challengeOption.get).isDefined) {
 
-      if (challengeOption.isDefined &&
-        Crypto.removeChallenge(challengeOption.get).isDefined) {
+            val xmlOption = (json \ "xml").asOpt[String]
+            val signatureOption = (json \ "signature").asOpt[String]
 
-        val xmlOption = (json \ "xml").asOpt[String]
-        val signatureOption = (json \ "signature").asOpt[String]
+            (xmlOption, signatureOption) match {
+              case (Some(xmlString), Some(signatureString)) =>
+                val xml = scala.xml.XML.loadString(xmlString)
+                val signatureBytes = Crypto.getBytesFromString(signatureString)
 
-        val action = (xmlOption, signatureOption) match {
-          case (Some(xmlString), Some(signatureString)) =>
-            val xml = scala.xml.XML.loadString(xmlString)
-            val signatureBytes = Crypto.getBytesFromString(signatureString)
+                val teacherUsername = (xml \ "teacher" \ "@username").toString()
+                val courseId = (xml \ "course" \ "@id").toString().toInt
 
-            val teacherUsername = (xml \ "teacher" \ "@username").toString()
-            val courseId = (xml \ "course" \ "@id").toString().toInt
+                val gradesBytes = Crypto.getBytesFromString(xml.toString())
+                if (checkSignature(teacherUsername, signatureBytes, gradesBytes)) {
+                  StorageRules.saveGrades(courseId, signatureBytes, gradesBytes)
 
-            val gradesBytes = Crypto.getBytesFromString(xml.toString())
-            if (checkSignature(teacherUsername, signatureBytes, gradesBytes)) {
-              StorageRules.saveGrades(courseId, signatureBytes, gradesBytes)
-
-              Ok(Json.obj("success" -> "Grades submited with success!"))
+                  Ok(Json.obj("success" -> "Grades submited with success!"))
+                }
+                else {
+                  Ok(Json.obj("error" -> "Signature verification failed!"))
+                }
+              case _ => Ok(Json.obj("error" -> "Missing parameters!"))
             }
-            else {
-              Ok(Json.obj("error" -> "Signature verification failed!"))
-            }
-          case _ => Ok(Json.obj("error" -> "Missing parameters!"))
-        }
 
-        action
-
-      } else {
-        Ok(Json.obj("error" -> "Challenge verification failed!"))
-      }
+          } else {
+            Ok(Json.obj("error" -> "Challenge verification failed!"))
+          }
+      }.getOrElse(Ok(Json.obj("error" -> "No payload found!")))
   }
 
   def getTeacherKey(teacher: String): Option[PublicKey] = {
     val responsePromise = WS.url("http://localhost:9000/security/key/" + teacher).get()
     val json = Await.result(responsePromise, Duration(5, "seconds")).json
+
     val keyOption = (json \ "key").asOpt[String]
     val signatureOption = (json \ "signature").asOpt[String]
 
@@ -117,12 +120,6 @@ object StorageController extends Controller {
 
   def checkSignature(teacher: String, signature: Array[Byte], xml: Array[Byte]) = {
     val teacherKey = getTeacherKey(teacher)
-
-    if (teacherKey.isDefined) {
-      Crypto.verify(teacherKey.get, signature, xml)
-    } else {
-      false
-    }
-
+    teacherKey.isDefined && Crypto.verify(teacherKey.get, signature, xml)
   }
 }
