@@ -15,17 +15,17 @@ object PopulateData {
         UserSecretsTable.create(UserSecretsFactory.apply(user.id, MD5.hash("admin"), Some(archivePublicKey), Some(interfacePrivateKey)))
       }
 
-      UserRules.createAdmin(UserRules.UserViewModel("Rafael Cortês", "ist169801", "password"))
+      UserRules.createAdmin(UserRules.UserViewModel("Rafael Cortes", "ist169801", "password"))
       UserRules.createTeacher(UserRules.UserViewModel("Paulo Marques", "ist169298", "password"))
       UserRules.createTeacher(UserRules.UserViewModel("Rodrigo Fernandes", "ist169637", "password"))
-      UserRules.createTeacher(UserRules.UserViewModel("João Rodrigues", "ist169408", "password"))
-      UserRules.createTeacher(UserRules.UserViewModel("André Bico", "ist169657", "password"))
+      UserRules.createTeacher(UserRules.UserViewModel("Joao Rodrigues", "ist169408", "password"))
+      UserRules.createTeacher(UserRules.UserViewModel("Andre Bico", "ist169657", "password"))
       UserRules.createTeacher(UserRules.UserViewModel("Manuel Almeida", "ist120000", "password"))
-      UserRules.createTeacher(UserRules.UserViewModel("José Severino", "ist120001", "password"))
-      UserRules.createTeacher(UserRules.UserViewModel("José Esteves", "ist120002", "password"))
+      UserRules.createTeacher(UserRules.UserViewModel("Jose Severino", "ist120001", "password"))
+      UserRules.createTeacher(UserRules.UserViewModel("Jose Esteves", "ist120002", "password"))
       UserRules.createTeacher(UserRules.UserViewModel("Manuel Lopes da Silva", "ist120003", "password"))
-      UserRules.createTeacher(UserRules.UserViewModel("José Carlos Lopes da Silva", "ist120004", "password"))
-      UserRules.createTeacher(UserRules.UserViewModel("António Chora Barroso", "ist120005", "password"))
+      UserRules.createTeacher(UserRules.UserViewModel("Jose Carlos Lopes da Silva", "ist120004", "password"))
+      UserRules.createTeacher(UserRules.UserViewModel("Antonio Chora Barroso", "ist120005", "password"))
 
       UserRules.createStudent(UserRules.UserViewModel("Bart Simpson", "ist190000", "password"))
       UserRules.createStudent(UserRules.UserViewModel("Homer Simpson", "ist190001", "password"))
@@ -48,11 +48,11 @@ object PopulateData {
       UserRules.createStudent(UserRules.UserViewModel("Nelson Muntz", "ist190018", "password"))
       UserRules.createStudent(UserRules.UserViewModel("Fat Tony", "ist190019", "password"))
 
-      CourseRules.createCourse(CourseRules.CourseViewModel("SIRS", "Segurança Informática em Redes e Sistemas", "DEI"))
-      CourseRules.createCourse(CourseRules.CourseViewModel("CPD", "Computação Paralela e Distribuída", "DEI"))
+      CourseRules.createCourse(CourseRules.CourseViewModel("SIRS", "Seguranca Informatica em Redes e Sistemas", "DEI"))
+      CourseRules.createCourse(CourseRules.CourseViewModel("CPD", "Computacao Paralela e Distribuida", "DEI"))
       CourseRules.createCourse(CourseRules.CourseViewModel("ASof", "Arquitecturas de Software", "DEI"))
       CourseRules.createCourse(CourseRules.CourseViewModel("QS", "Qualidade de Software", "DEI"))
-      CourseRules.createCourse(CourseRules.CourseViewModel("GPI", "Gestão de Projectos Informáticos", "DEI"))
+      CourseRules.createCourse(CourseRules.CourseViewModel("GPI", "Gestao de Projectos Informaticos", "DEI"))
 
       CourseRules.assignTeacher(CourseRules.TeachingViewModel(UserTable.getByUsername("ist169298").get.id,
         CourseTable.getByAbbrev("SIRS").get.id))
