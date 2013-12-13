@@ -34,15 +34,6 @@ object Crypto {
     getStringFromBytes(decipheredData)
   }
 
-  def decryptKeyWithRSA(data: String): String = {
-    val cipher = Cipher.getInstance("RSA")
-    cipher.init(Cipher.DECRYPT_MODE, loadKeyInterfacePubKey())
-
-    val dataBytes = getBytesFromString(data)
-    val decipheredData = cipher.doFinal(dataBytes)
-    getStringFromBytes(decipheredData)
-  }
-
   def decryptAES(data: String): String = {
     PlayCrypto.decryptAES(data, a)
   }

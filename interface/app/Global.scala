@@ -37,10 +37,14 @@ object Global extends GlobalSettings {
     val URL = "http://localhost:9001/updatekey"
     val newKeyString = Crypto.generateSymetricKey()
 
+    println("KEY: " + newKeyString)
+
     val cipheredKey = Crypto.encryptRSA(newKeyString)
+    val signedKey = Crypto.sign(Crypto.loadKeyInterfacePvtKey(), Crypto.getBytesFromString(cipheredKey))
 
     val postData = Json.obj(
-      "key" -> cipheredKey
+      "key" -> cipheredKey,
+      "signature" -> Crypto.getStringFromBytes(signedKey)
     )
 
     import scala.util.control.Breaks._
@@ -49,18 +53,18 @@ object Global extends GlobalSettings {
         for (i <- 0 to RETRIES) {
           val responsePromise = WS.url(URL).post(postData)
           val response = Await.result(responsePromise, Duration(5, "seconds")).body
-        val json = Json.parse(response)
+          val json = Json.parse(response)
 
-        if ((json \ "success").asOpt[String].isDefined) {
-          println("The communication key was exchanged with success!")
-          break
+          if ((json \ "success").asOpt[String].isDefined) {
+            println("The communication key was exchanged with success!")
+            break
+          }
         }
-      }
       } catch {
         case t: Exception => println("Key exchange failed!")
       }
 
-    println("Ups: there was a problem establishing the communication key")
+      println("Ups: there was a problem establishing the communication key")
     }
   }
 

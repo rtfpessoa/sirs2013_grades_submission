@@ -80,15 +80,15 @@ object StorageController extends Controller {
             if (checkSignature(teacherUsername, signatureBytes, gradesBytes)) {
               StorageRules.saveGrades(courseId, signatureBytes, gradesBytes)
 
-              Some(Ok(Json.obj("success" -> "Grades submited with success!")))
+              Ok(Json.obj("success" -> "Grades submited with success!"))
             }
             else {
-              Some(Ok(Json.obj("error" -> "Signature verification failed!")))
+              Ok(Json.obj("error" -> "Signature verification failed!"))
             }
-          case _ => None
+          case _ => Ok(Json.obj("error" -> "Missing parameters!"))
         }
 
-        action.getOrElse(Ok(Json.obj("error" -> "Missing parameters!")))
+        action
 
       } else {
         Ok(Json.obj("error" -> "Challenge verification failed!"))
