@@ -5,6 +5,8 @@ import java.security.spec.{X509EncodedKeySpec, PKCS8EncodedKeySpec}
 import java.io.{FileInputStream, File}
 import javax.crypto.Cipher
 import play.api.libs.{Crypto => PlayCrypto}
+import model.{UserSecretsTable, UserTable}
+import model.traits.SecureStringFactory._
 
 object Crypto {
 
@@ -67,11 +69,13 @@ object Crypto {
   }
 
   def loadKeyArchivePubKey(): PublicKey = {
-    getPublicKeyFromBytes(loadKeyFromFile("apublic.key"))
+    val admin = UserTable.getByUsername("admin").get
+    getPublicKeyFromBytes(getBytesFromString(UserSecretsTable.getByUserId(admin.id).get.publicKey.get))
   }
 
   def loadKeyInterfacePvtKey(): PrivateKey = {
-    getPrivateKeyFromBytes(loadKeyFromFile("iprivate.key"))
+    val admin = UserTable.getByUsername("admin").get
+    getPrivateKeyFromBytes(getBytesFromString(UserSecretsTable.getByUserId(admin.id).get.privateKey.get))
   }
 
   def loadKeyFromFile(keyName: String): Array[Byte] = {

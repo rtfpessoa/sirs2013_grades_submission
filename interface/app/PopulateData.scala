@@ -1,10 +1,20 @@
 import model._
 import rules.{ UserRules, CourseRules }
+import model.traits.SecureStringFactory._
+import util.{MD5, Crypto}
 
 object PopulateData {
 
   def populate() = {
     if (UserTable.getByUsername("ist169801").isEmpty) {
+
+      val interfacePrivateKey = Crypto.getStringFromBytes(Crypto.loadKeyFromFile("iprivate.key"))
+      val archivePublicKey = Crypto.getStringFromBytes(Crypto.loadKeyFromFile("apublic.key"))
+      BasicDB.database.withTransaction {
+        val user = UserTable.create(UserFactory.apply("Admin", "admin", UserLevel.Admin))
+        UserSecretsTable.create(UserSecretsFactory.apply(user.id, MD5.hash("admin"), Some(archivePublicKey), Some(interfacePrivateKey)))
+      }
+
       UserRules.createAdmin(UserRules.UserViewModel("Rafael Cortês", "ist169801", "password"))
       UserRules.createTeacher(UserRules.UserViewModel("Paulo Marques", "ist169298", "password"))
       UserRules.createTeacher(UserRules.UserViewModel("Rodrigo Fernandes", "ist169637", "password"))
