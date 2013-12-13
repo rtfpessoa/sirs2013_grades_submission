@@ -3,6 +3,7 @@ package model.traits
 import scala.slick.driver.PostgresDriver.simple._
 import play.api.libs.Crypto
 import scala.language.reflectiveCalls
+import scala.language.implicitConversions
 
 case class SecureString(str: String) {
 

@@ -1,5 +1,6 @@
 import sbt._
 import play.Project._
+import sbt.Keys._
 
 object ApplicationBuild extends Build {
 
@@ -14,6 +15,12 @@ object ApplicationBuild extends Build {
   )
 
 
-  val main = play.Project(appName, appVersion, appDependencies)
+  val main = play.Project(appName, appVersion, appDependencies).settings(
+    scalacOptions in ThisBuild += "-deprecation",
+    scalacOptions in ThisBuild += "-feature",
+    scalacOptions in ThisBuild += "-unchecked",
+    scalacOptions in ThisBuild += "-Ywarn-adapted-args",
+    scalacOptions in ThisBuild += "-Xlint"
+  )
 
 }

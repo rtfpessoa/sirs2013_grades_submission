@@ -1,5 +1,6 @@
 import model._
 import model.traits.SecureString
+import scala.language.implicitConversions
 import play.api._
 import play.api.libs.json.Json
 import play.api.libs.ws.WS
