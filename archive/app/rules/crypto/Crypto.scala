@@ -34,6 +34,10 @@ object Crypto {
     getStringFromBytes(decipheredData)
   }
 
+  def encryptAES(data: String): String = {
+    PlayCrypto.encryptAES(data, a)
+  }
+
   def decryptAES(data: String): String = {
     PlayCrypto.decryptAES(data, a)
   }

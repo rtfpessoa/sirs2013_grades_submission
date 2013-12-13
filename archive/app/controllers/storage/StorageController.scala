@@ -60,7 +60,7 @@ object StorageController extends Controller {
       val data = request.body.asJson.get
 
       val payload = (data \ "payload").asOpt[String]
-      payload.map {
+      val response = payload.map {
         data =>
           val decipheredRequest = Crypto.decryptAES(data)
 
@@ -85,18 +85,22 @@ object StorageController extends Controller {
                 if (checkSignature(teacherUsername, signatureBytes, gradesBytes)) {
                   StorageRules.saveGrades(courseAbbrev, signatureBytes, gradesBytes)
 
-                  Ok(Json.obj("success" -> "Grades submited with success!"))
+                  Json.obj("success" -> "Grades submited with success!")
                 }
                 else {
-                  Ok(Json.obj("error" -> "Signature verification failed!"))
+                  Json.obj("error" -> "Signature verification failed!")
                 }
-              case _ => Ok(Json.obj("error" -> "Missing parameters!"))
+              case _ => Json.obj("error" -> "Missing parameters!")
             }
 
           } else {
-            Ok(Json.obj("error" -> "Challenge verification failed!"))
+            Json.obj("error" -> "Challenge verification failed!")
           }
-      }.getOrElse(Ok(Json.obj("error" -> "No payload found!")))
+      }.getOrElse(Json.obj("error" -> "No payload found!"))
+
+      val cipheredResponse = Crypto.encryptAES(response.toString())
+
+      Ok(Json.obj("payload" -> cipheredResponse))
   }
 
   def getTeacherKey(teacher: String): Option[PublicKey] = {

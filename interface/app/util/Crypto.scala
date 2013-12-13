@@ -30,6 +30,14 @@ object Crypto {
     PlayCrypto.encryptAES(data, a)
   }
 
+  def decryptAES(data: String): String = {
+    PlayCrypto.decryptAES(data, a)
+  }
+
+  def decryptWithGivenAES(key: String, data: String): String = {
+    PlayCrypto.decryptAES(data, key)
+  }
+
   def sign(key: PrivateKey, data: Array[Byte]): Array[Byte] = {
     val signer = Signature.getInstance("SHA1withRSA")
     signer.initSign(key)

@@ -56,15 +56,24 @@ object Global extends GlobalSettings {
           val response = Await.result(responsePromise, Duration(5, "seconds")).body
           val json = Json.parse(response)
 
-          if ((json \ "success").asOpt[String].isDefined) {
-            Crypto.update(newKeyString)
-            println("The communication key was exchanged with success!")
-            break()
+          val payload = (json \ "payload").asOpt[String]
+          val error = (json \ "error").asOpt[String]
+          if (payload.isDefined) {
+            val decipheredPayload = Crypto.decryptWithGivenAES(newKeyString, payload.get)
+            val responseJson = Json.parse(decipheredPayload)
+
+            if ((responseJson \ "success").asOpt[String].isDefined) {
+              Crypto.update(newKeyString)
+              println("The communication key was exchanged with success!")
+              break()
+            } else {
+              println("This was strange!")
+            }
           } else {
-            println((json \ "error").as[String])
+            println(error.getOrElse("Missing payload!"))
           }
         } catch {
-          case t: Exception => println("Key exchange failed!")
+          case e: Exception => e.printStackTrace()
         }
       }
 

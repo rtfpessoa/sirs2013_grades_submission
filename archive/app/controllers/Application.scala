@@ -9,7 +9,7 @@ object Application extends Controller {
 
   def index = Action {
     if (StorageRules.gradesDir.exists()) {
-      val courses = for (file <- StorageRules.gradesDir.listFiles if file != null && (file.getName endsWith "-grades.txt")) yield {
+      val courses = for (file <- StorageRules.gradesDir.listFiles if file != null && (file.getName endsWith "-grades.xml")) yield {
         val fileNameParts = file.getName.split("-")
         val courseAbbrev = fileNameParts(0)
         IndexViewModel(courseAbbrev, courseAbbrev)

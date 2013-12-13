@@ -61,7 +61,22 @@ object Application extends Controller with Secured {
           if (classGrades.grades.map(s => s.grade >= 0 && s.grade <= 20).fold(true)(_ && _)) {
             val response = Archive.sendGrades(classGrades)
 
-            Ok(Json.obj("success" -> response))
+            //TODO: Grades submission failed
+
+            val json = (Json.parse(response) \ "payload").asOpt[String]
+            if (json.isDefined) {
+              val decipheredPayload = Crypto.decryptAES(json.get)
+              val successMessage = (Json.parse(decipheredPayload) \ "success").asOpt[String]
+
+              if (successMessage.isDefined) {
+                Ok(Json.obj("success" -> successMessage.get))
+              } else {
+                Ok(Json.obj("error" -> Json.parse(decipheredPayload) \ "error").as[String])
+              }
+
+            } else {
+              Ok(Json.obj("error" -> "Missing payload!"))
+            }
           } else {
             Ok(Json.obj("error" -> "Invalid grades"))
           }

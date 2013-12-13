@@ -13,7 +13,7 @@ object CryptoController extends Controller {
       val cipheredKey = (json \ "key").asOpt[String]
       val signedKey = (json \ "signature").asOpt[String]
 
-      val action = (cipheredKey, signedKey) match {
+      (cipheredKey, signedKey) match {
         case (Some(stringKey), Some(stringSignature)) =>
 
           if (Crypto.verify(Crypto.loadKeyInterfacePubKey(), Crypto.getBytesFromString(stringSignature),
@@ -22,14 +22,15 @@ object CryptoController extends Controller {
             val decipheredKey = Crypto.decryptRSA(stringKey)
             Crypto.update(decipheredKey)
 
-            Json.obj("success" -> "The key was successfully updated!")
-          } else {
-            Json.obj("error" -> "Signature did not match!")
-          }
-        case _ => Json.obj("error" -> "Missing parameters!")
-      }
+            val answer = Json.obj("success" -> "The key was successfully updated!")
+            val cipheredResponse = Crypto.encryptAES(answer.toString())
 
-      Ok(action)
+            Ok(Json.obj("payload" -> cipheredResponse))
+          } else {
+            Ok(Json.obj("error" -> "Signature did not match!"))
+          }
+        case _ => Ok(Json.obj("error" -> "Missing parameters!"))
+      }
   }
 
   def challenge = Action {
