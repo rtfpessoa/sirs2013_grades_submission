@@ -102,8 +102,6 @@ object Crypto {
   }
 
   def generateSymetricKey() = {
-    val key = java.util.UUID.randomUUID.toString.filter(_ != '-')
-    a = key
-    a
+    java.util.UUID.randomUUID.toString.filter(_ != '-')
   }
 }
