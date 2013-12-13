@@ -10,6 +10,8 @@ import play.api.data._
 import play.api.data.Forms._
 import rules.crypto.Crypto
 import java.security.PublicKey
+import play.api.Play
+import play.api.Play.current
 
 object StorageController extends Controller {
 
@@ -98,7 +100,8 @@ object StorageController extends Controller {
   }
 
   def getTeacherKey(teacher: String): Option[PublicKey] = {
-    val responsePromise = WS.url("http://localhost:9000/security/key/" + teacher).get()
+    val URL = Play.configuration.getString("interface.url").get + "security/key/" + teacher
+    val responsePromise = WS.url(URL).get()
     val json = Await.result(responsePromise, Duration(5, "seconds")).json
 
     val keyOption = (json \ "key").asOpt[String]

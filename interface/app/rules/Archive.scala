@@ -7,6 +7,8 @@ import model.{UserSecretsTable, UserTable}
 import model.traits.SecureStringFactory
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import play.api.Play
+import play.api.Play.current
 
 case class StudentGrade(name: String, username: String, grade: Int) {
   override def toString =
@@ -27,10 +29,11 @@ case class CourseGrades(courseId: Long, courseName: String, courseAbbrev: String
 
 object Archive {
 
-  private val URL_SUBMIT_GRADES = "http://localhost:9001/storage/receive"
-  private val URL_REQUEST_CHALLENGE = "http://localhost:9001/challenge"
+  private val URL_SUBMIT_GRADES = Play.configuration.getString("archive.url").get + "/storage/receive"
+  private val URL_REQUEST_CHALLENGE = Play.configuration.getString("archive.url").get + "challenge"
 
   def sendGrades(grades: CourseGrades) = {
+
     val user = UserTable.getByUsername(grades.teacherUsername).get
     val teacherPrivateKey = UserSecretsTable.getByUserId(user.id).get.privateKey
     val keyBytes = SecureStringFactory.fromSecureString(teacherPrivateKey.get)

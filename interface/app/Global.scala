@@ -6,6 +6,8 @@ import play.api.libs.ws.WS
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import util.Crypto
+import play.api.Play
+import play.api.Play.current
 
 object Global extends GlobalSettings {
 
@@ -34,7 +36,7 @@ object Global extends GlobalSettings {
   }
 
   def exchangeComunicationKey(): Unit = {
-    val URL = "http://localhost:9001/updatekey"
+    val URL = Play.configuration.getString("archive.url").get + "updatekey"
     val newKeyString = Crypto.generateSymetricKey()
 
     val cipheredKey = Crypto.encryptRSA(newKeyString)
