@@ -10,11 +10,11 @@ object StorageRules {
   val gradesDir = new File(currentDir + "/" + Play.configuration.getString("grades.dir").get)
 
   def getGradesFile(course: String) = {
-    new File(gradesDir.getAbsolutePath + "/" + course + "-grades.txt")
+    new File(gradesDir.getAbsolutePath + "/" + course + "-grades.xml")
   }
 
   def getSignatureFile(course: String) = {
-    new File(gradesDir.getAbsolutePath + "/" + course + "-grades-signature.txt")
+    new File(gradesDir.getAbsolutePath + "/" + course + "-grades-signature.sig")
   }
 
   def saveGrades(courseAbbrev: String, signature: Array[Byte], grades: Array[Byte]) = {
