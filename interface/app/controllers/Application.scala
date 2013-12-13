@@ -38,6 +38,7 @@ object Application extends Controller with Secured {
     mapping(
       "courseId" -> longNumber,
       "courseName" -> text,
+      "courseAbbrev" -> text,
       "teacherName" -> text,
       "teacherUsername" -> text,
       "grades" -> seq(

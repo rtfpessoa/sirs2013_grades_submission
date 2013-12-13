@@ -19,12 +19,12 @@ object StorageController extends Controller {
     implicit request =>
       courseForm.bindFromRequest.fold(
         formWithErrors => BadRequest(controllers.routes.Application.index().url),
-        courseId => {
-          val gradesFile = StorageRules.getGradesFile(courseId)
+        courseAbbrev => {
+          val gradesFile = StorageRules.getGradesFile(courseAbbrev)
           val gradesBytes = StorageRules.getDataFromFile(gradesFile)
           val gradesXml = scala.xml.XML.loadString(Crypto.getStringFromBytes(gradesBytes))
 
-          val signatureFile = StorageRules.getSignatureFile(courseId)
+          val signatureFile = StorageRules.getSignatureFile(courseAbbrev)
           val signatureBytes = StorageRules.getDataFromFile(signatureFile)
 
           val courseName = (gradesXml \ "course" \ "@name").toString()
@@ -50,7 +50,7 @@ object StorageController extends Controller {
 
   private val courseForm = Form(
     single(
-      "courseId" -> number
+      "courseAbbrev" -> text
     ))
 
   def receive = Action {
@@ -77,11 +77,11 @@ object StorageController extends Controller {
                 val signatureBytes = Crypto.getBytesFromString(signatureString)
 
                 val teacherUsername = (xml \ "teacher" \ "@username").toString()
-                val courseId = (xml \ "course" \ "@id").toString().toInt
+                val courseAbbrev = (xml \ "course" \ "@abbrev").toString().toString()
 
                 val gradesBytes = Crypto.getBytesFromString(xml.toString())
                 if (checkSignature(teacherUsername, signatureBytes, gradesBytes)) {
-                  StorageRules.saveGrades(courseId, signatureBytes, gradesBytes)
+                  StorageRules.saveGrades(courseAbbrev, signatureBytes, gradesBytes)
 
                   Ok(Json.obj("success" -> "Grades submited with success!"))
                 }

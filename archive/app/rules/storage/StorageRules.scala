@@ -9,24 +9,24 @@ object StorageRules {
 
   val gradesDir = new File(currentDir + "/" + Play.configuration.getString("grades.dir").get)
 
-  def getGradesFile(course: Int) = {
+  def getGradesFile(course: String) = {
     new File(gradesDir.getAbsolutePath + "/" + course + "-grades.txt")
   }
 
-  def getSignatureFile(course: Int) = {
+  def getSignatureFile(course: String) = {
     new File(gradesDir.getAbsolutePath + "/" + course + "-grades-signature.txt")
   }
 
-  def saveGrades(courseId: Int, signature: Array[Byte], grades: Array[Byte]) = {
+  def saveGrades(courseAbbrev: String, signature: Array[Byte], grades: Array[Byte]) = {
     if (!gradesDir.exists()) {
       gradesDir.mkdirs()
     }
 
-    val fosg = new FileOutputStream(getGradesFile(courseId))
+    val fosg = new FileOutputStream(getGradesFile(courseAbbrev))
     fosg.write(grades)
     fosg.close()
 
-    val foss = new FileOutputStream(getSignatureFile(courseId))
+    val foss = new FileOutputStream(getSignatureFile(courseAbbrev))
     foss.write(signature)
     foss.close()
   }

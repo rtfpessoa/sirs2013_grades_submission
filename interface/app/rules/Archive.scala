@@ -13,10 +13,10 @@ case class StudentGrade(name: String, username: String, grade: Int) {
     s"""<student name="$name" username="$username" grade="$grade" />"""
 }
 
-case class CourseGrades(courseId: Long, courseName: String, teacherName: String, teacherUsername: String, grades: Seq[StudentGrade]) {
+case class CourseGrades(courseId: Long, courseName: String, courseAbbrev: String, teacherName: String, teacherUsername: String, grades: Seq[StudentGrade]) {
   override def toString =
     s"""<xml>
-      |  <course id="$courseId" name="$courseName" />
+      |  <course id="$courseId" name="$courseName" abbrev="$courseAbbrev" />
       |  <teacher name="$teacherName" username="$teacherUsername" />
       |  <grades>
       |    ${grades.mkString}
