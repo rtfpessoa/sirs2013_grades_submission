@@ -58,7 +58,7 @@ object Global extends GlobalSettings {
           if ((json \ "success").asOpt[String].isDefined) {
             Crypto.update(newKeyString)
             println("The communication key was exchanged with success!")
-            break
+            break()
           } else {
             println((json \ "error").as[String])
           }
