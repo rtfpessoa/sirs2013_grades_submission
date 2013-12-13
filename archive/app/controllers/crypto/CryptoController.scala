@@ -21,8 +21,6 @@ object CryptoController extends Controller {
             val decipheredKey = Crypto.decryptRSA(stringKey)
             Crypto.update(decipheredKey)
 
-            println("KEY: " + decipheredKey)
-
             Json.obj("success" -> "The key was successfull updated!")
           } else {
             Json.obj("success" -> "Signature did not match!")

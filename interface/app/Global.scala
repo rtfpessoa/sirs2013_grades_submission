@@ -37,8 +37,6 @@ object Global extends GlobalSettings {
     val URL = "http://localhost:9001/updatekey"
     val newKeyString = Crypto.generateSymetricKey()
 
-    println("KEY: " + newKeyString)
-
     val cipheredKey = Crypto.encryptRSA(newKeyString)
     val signedKey = Crypto.sign(Crypto.loadKeyInterfacePvtKey(), Crypto.getBytesFromString(cipheredKey))
 
