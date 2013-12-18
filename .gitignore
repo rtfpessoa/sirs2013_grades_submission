@@ -22,7 +22,7 @@ server.pid
 *.eml
 
 keys/
-archive/keys
-archive/grades
+grades/
+backup/
 
 
